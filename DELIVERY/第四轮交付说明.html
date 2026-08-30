@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四轮交付说明 · Phase 1 最小可行实测 + T5-T8 定稿（2026-08-28）</title>
+<style>
+:root{--navy:#1b2a4a;--steel:#5a6b8c;--ink:#22293a;--paper:#f7f8fa;--line:#d4dae3;--accent:#c0392b;--soft:#eef1f6;--ok:#1e7b34;--warn:#b3541e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:15.5px}
+.wrap{max-width:1060px;margin:0 auto;padding:52px 36px 72px}
+header{border-bottom:3px solid var(--navy);padding-bottom:24px;margin-bottom:36px}
+.kicker{font-size:12px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;font-weight:600}
+h1{color:var(--navy);font-size:30px;line-height:1.3;margin-bottom:10px}
+.meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--steel)}
+.meta b{color:var(--navy)}
+section{margin-bottom:40px}
+h2{font-size:19px;color:var(--navy);border-left:4px solid var(--accent);padding-left:13px;margin-bottom:16px}
+h3{font-size:15.5px;color:var(--navy);margin:18px 0 8px}
+.verdict{background:#fff;border:1px solid var(--line);border-top:4px solid var(--accent);padding:24px 28px;box-shadow:0 1px 3px rgba(27,42,74,.06)}
+.concl{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px;margin:12px 0 6px}
+th{background:var(--navy);color:#fff;padding:8px 11px;text-align:left;font-weight:600}
+td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tr:nth-child(even) td{background:var(--soft)}
+.ok{color:var(--ok);font-weight:700}.refresh{color:var(--warn);font-weight:700}.closed{color:var(--navy);font-weight:700}
+.fail{color:var(--accent);font-weight:700}
+code,pre{font-family:Consolas,"Courier New",monospace}
+pre{background:#20242e;color:#dfe6f1;padding:14px 16px;border-radius:6px;overflow-x:auto;font-size:12.5px;margin:10px 0}
+code{background:var(--soft);padding:1px 5px;border-radius:3px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--navy);padding:16px 18px}
+.card h3{font-size:15px;color:var(--navy);margin:0 0 6px}
+.card p{font-size:13px}
+.big{font-size:22px;font-weight:700;color:var(--navy)}
+.box{background:#fff;border:1px solid var(--line);border-left:4px solid var(--warn);padding:16px 20px;margin:14px 0;font-size:14px}
+.box.danger{border-left-color:var(--accent)}
+.box.good{border-left-color:var(--ok)}
+.box b{color:var(--navy)}
+ul{margin:10px 0 10px 22px}
+li{margin-bottom:5px}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;font-size:12.5px;color:var(--steel)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<div class="kicker">Research Round 4 · FinAI Quant</div>
+<h1>第四轮交付说明 · Phase 1 最小可行实测 + T5-T8 定稿</h1>
+<div class="meta">
+<span><b>执行日</b> 2026-08-28</span>
+<span><b>性质</b> 从案头调研转入上手实测（第一次真跑 §9 方案）</span>
+<span><b>环境</b> Python 3.11.5 venv + akshare 1.18.94 + baostock 0.9.3</span>
+<span><b>成本</b> 0 元（monid 未使用，全程免费通道）</span>
+<span><b>版本</b> V5</span>
+</div>
+</header>
+
+<section>
+<div class="verdict">
+<p class="concl">一句话结论</p>
+<p>四专项全部执行完毕：<b>①复权一致性</b>（条件通过，分歧源已定位为股改事件）、<b>②停牌日</b>（baostock 挂 / 新浪通过，发现前值填充脏行）、<b>③公告日</b>（通过，且推翻"baostock 无公告日字段"的原判断）、<b>④增量成功率</b>（5 日冒烟 190/190 = 100%）。<b>T5 / T6 / T7 全部定稿，T8 定稿 4/7 项；制度性变更：无。</b></p>
+<div class="grid">
+<div class="card"><div class="big">4 / 4</div><p>四专项全部执行完毕（④为 5 日冒烟版，20 日未跑满已登记 N-25）</p></div>
+<div class="card"><div class="big">5 / 9</div><p>12 号 §10 遗留待验证实测定稿 5 项，新增遗留项 N-25 ~ N-28</p></div>
+<div class="card"><div class="big">3 + 4/7</div><p>T5 / T6 / T7 定稿；T8 案头可定部分定稿 4 项（另 3 项待 Phase 2 实测）</p></div>
+<div class="card"><div class="big">0 元</div><p>monid 未触发；全程 curl / WebFetch / WebSearch / PyPI JSON / GitHub REST + 本地实测</p></div>
+</div>
+</div>
+</section>
+
+<section>
+<h2>一、本轮最有价值的三个发现</h2>
+<div class="box danger">
+<p><b>1. baostock 分钟线实际起于 2020 年初（约 6.5 年），社区"2011 年起"被证伪。</b><br>
+请求 2011-2013 年 5/15/30/60min 全部返回 0 行（4 只老股 + 2 只次新 × 4 频档 = 24 次请求无一命中）；全史拉取最早仅到 <code>sh.600319 → 2020-01-14</code>、<code>sh.600548 → 2020-01-02</code>。<br>
+<b>影响</b>：零成本小时级回测窗口从"十数年"砍到 6.5 年 —— <b>2015 / 2018 / 2020 三段极端行情无法用 baostock 分钟线回测</b>。若策略需要这些样本，必须叠加 mootdx 本地库或购买 tushare 积分档。</p>
+</div>
+<div class="box danger">
+<p><b>2. baostock 在停牌日返回"前值填充"脏行 —— 不报错、看起来完全正常。</b><br>
+停牌日有行、<code>tradestatus=0</code>、<code>volume=0</code>、<b>OHLC 四项全部等于 <code>preclose</code></b>，5 只长停牌样本 <b>100% 命中</b>（128/128、127/127、102/102、120/120、58/58）。直接入库的后果：假 K 线稀释指标窗口、回测在停牌日"顺利成交"从而系统性低估回撤（正是 13 号用例 3 要抓的假成交）。<br>
+<b>处方（写入适配层，不可省略）</b>：</p>
+<pre>df = df[df["tradestatus"] == "1"]                              # 首选：官方状态位
+df = df[pd.to_numeric(df["volume"], errors="coerce") > 0]      # 兜底：剔除零成交行</pre>
+<p><b>对照</b>：akshare 新浪系在停牌日<b>直接不返回行</b>（"跳过派"），0 脏行。两源口径完全相反 —— 同一区间 sh.600710 返回 <b>166 行（baostock）vs 38 行（新浪）</b>，跨源对账前必须先把 baostock 侧过滤到 <code>tradestatus=1</code>。</p>
+</div>
+<div class="box good">
+<p><b>3. baostock 季频财报其实有 <code>pubDate</code> 公告日字段（推翻 12 号 §6 原判断）。</b><br>
+三条接口均有：<code>query_profit_data → pubDate</code>、<code>query_performance_express_report → performanceExpPubDate</code>、<code>query_forecast_report → profitForcastExpPubDate</code>。128 条样本（32 只 × 2024 四期）非空率 100%、保守性成立率 <b>100%（0 例违反）</b>。<br>
+<b>影响</b>：<b>0 元源即可做日线级 PIT 对齐</b>，不必为公告日上 tushare 积分档。同时降级方案代价由"最多约 4 个月"修正为<b>中位 3 天 / 最大 46 天</b>，可放心用作兜底。</p>
+</div>
+</section>
+
+<section>
+<h2>二、实测配置与四专项验收</h2>
+
+<h3>2.1 实测配置</h3>
+<table>
+<tr><th style="width:110px">项</th><th>配置</th></tr>
+<tr><td>环境</td><td>Python <b>3.11.5 venv</b>（<code>py -3.11 -m venv</code>，打包版 3.13.12 无 venv 模块）+ akshare <b>1.18.94</b> + baostock <b>0.9.3</b> + pandas 3.0.5 —— 严格按 12 号附录 A 处方</td></tr>
+<tr><td>代理规避</td><td><code>urllib.request.getproxies</code> 置空 + 清空 proxy 环境变量（比附录 A.2 的 <code>NO_PROXY</code> 更彻底，对 akshare 内部创建的任意 session 均生效）</td></tr>
+<tr><td>股票池</td><td><b>38 只</b>（原设计 200+，按"最小可行"收缩）：分层抽样 28（沪主板 9 / 深主板 7 / 创业板 6 / 科创板 5 / 北交所 3）+ ST 4 + 次新 4 + 长停牌 3</td></tr>
+<tr><td>长停牌样本</td><td>sh.600710 <b>128 个交易日</b>连续停牌、sz.002310 <b>127 日</b>、sz.002544 <b>102 日</b>（扫描 45 只老股后按 <code>tradestatus</code> 排序取前三）</td></tr>
+<tr><td>测试区间</td><td>三段不变：P1 2015-06-01~2016-01-31 / P2 2024-09-18~10-08 / P3 2024-04-12~12-31</td></tr>
+<tr><td>实际用源</td><td>baostock（主）+ akshare 新浪系（校验）+ akshare 腾讯系（补充）。<span class="fail">东财系本机不可达，未能参与</span></td></tr>
+</table>
+
+<h3>2.2 四专项验收</h3>
+<table>
+<tr><th style="width:110px">专项</th><th style="width:170px">验收标准</th><th>实测结果</th><th style="width:110px">判定</th></tr>
+<tr><td>① 复权一致性</td><td>因子相对误差 &lt;0.1%</td><td>同源 36/36 通过（<b>3.3e-16</b>）；跨源全史 16/36 不通过（最大 31.5%）；<b>跨源 2015 年后（收益率口径）37/37 通过，最大差 0.19pp</b></td><td><span class="ok">✅ 条件通过</span></td></tr>
+<tr><td>② 停牌日无脏数据</td><td>停牌日无假 OHLC</td><td>baostock 前值填充脏行 <b>100% 命中</b>；新浪系 0 脏行</td><td><span class="fail">⚠️ baostock 挂<br></span><span class="ok">新浪通过</span></td></tr>
+<tr><td>③ 公告日</td><td>一致率 100% 或降级方案保守</td><td><b>baostock 有 pubDate</b>；128 条样本保守性成立率 <b>100%（0 例违反）</b></td><td><span class="ok">✅ 通过</span></td></tr>
+<tr><td>④ 增量成功率</td><td>连续 20 日 ≥99%</td><td><b>5 日冒烟 × 38 只 = 190 次，100.00%，0 不一致</b></td><td><span class="ok">✅ 通过（冒烟版）</span></td></tr>
+</table>
+
+<h3>2.3 ①复权一致性 —— 分歧已定位，不是随机噪声</h3>
+<ul>
+<li><b>同源自洽完美</b>：隐含因子（后复权价÷不复权价）与 <code>query_adjust_factor</code> 的 <code>backAdjustFactor</code> 逐日比对，最大相对误差 <b>3.3e-16</b>；前复权与后复权互推最大 2.1e-05。</li>
+<li><b>分歧源唯一</b>：比值跳变定位（容差 0.5%）后，全部显著跳变只有 8 条 / 7 只，其中 <b>6 条集中在 2005-11 ~ 2006-05、幅度高度一致（×1.32~1.35）</b> —— 即<b>股权分置改革对价支付窗口</b>。判定：新浪把股改对价计入除权、baostock 不计入；其余事件两源一致。</li>
+</ul>
+<table>
+<tr><th>决策级检验（回测真正消费的量：后复权区间收益率）</th><th>样本</th><th>跨源收益差（pp）最大/中位</th><th>&gt;0.5pp 只数</th></tr>
+<tr><td>P1 2015 股灾</td><td>18</td><td>0.0146 / 0.0021</td><td>0</td></tr>
+<tr><td>P2 2024-09 行情</td><td>32</td><td>0.1939 / 0.0176</td><td>0</td></tr>
+<tr><td>P3 2024 新国九条后</td><td>32</td><td>0.1019 / 0.0180</td><td>0</td></tr>
+<tr><td>近三年 2023-08~2026-08</td><td>37</td><td>0.1909 / 0.0192</td><td>0</td></tr>
+</table>
+<div class="box">
+<p><b>精度差异（新发现）</b>：baostock 后复权价 <b>10 位小数</b> / 不复权 4 位；akshare 新浪系 <b>bfq 与 hfq 均只有 2 位小数</b>，对低价股（6~9 元）引入最高约 <b>0.05%</b> 量化误差 —— 这解释了跨源 0.1~0.2% 的残差，属精度噪声而非算法分歧。</p>
+<p style="margin-top:8px"><b>→ 落地结论</b>：① 回测窗口在 2006 年之后（本项目即如此）→ 两源复权口径实质等价，可任意选源；② <b>因子不可跨源混用</b>（股改会造成 32%+ 跳变）；③ <b>复权价存储优先 baostock</b>，新浪适合做不复权原始行情的校验源。</p>
+</div>
+
+<h3>2.4 ③公告日 —— 推翻原判断</h3>
+<ul>
+<li>32 只 × 2024 年四期 = 128 条有效样本：<code>pubDate</code> 非空率 100%、<code>pubDate ≥ statDate</code> 成立率 100%、<b>降级方案保守性（<code>pubDate ≤ 法定截止日</code>）成立率 100%（0 例违反）</b>。</li>
+<li>公告滞后中位 31 天（年报 116 天、半年报 59 天）；真实公告日相对法定截止日提前<b>中位 3 天、最大 46 天</b>（年报最吃亏）。</li>
+</ul>
+
+<h3>2.5 环境侧重大发现：东财 push2his 本机不可达（非上游死亡）</h3>
+<table>
+<tr><th style="width:340px">探测</th><th>结果</th></tr>
+<tr><td>直连 IPv4 / IPv6</td><td><span class="fail">❌</span> curl (56) Connection closed abruptly，0.13s 内断连</td></tr>
+<tr><td>走东京代理出口</td><td><span class="fail">❌</span> 同样 curl (56)</td></tr>
+<tr><td>requests(OpenSSL) + curl_cffi 五种浏览器 TLS 指纹</td><td><span class="fail">❌</span> 全部失败</td></tr>
+<tr><td>根路径 <code>https://push2his.eastmoney.com/</code></td><td><span class="ok">✅</span> 404（主机可达）</td></tr>
+<tr><td>同域 quote / www / datacenter-web / datacenter</td><td><span class="ok">✅</span> 均 200</td></tr>
+<tr><td><b>外部网络（非本机）访问同一 API</b></td><td><span class="ok">✅ HTTP 200 + 完整 600519 日线 JSON</span></td></tr>
+</table>
+<div class="box">
+<p><b>结论（≥2 独立证据）</b>：上游存活，失效在<b>本机网络侧</b> —— 对本机两条不同出口一致生效、只作用于 <code>/api/</code> 路径。<b>这不属于第 7 章所说的数据源稳定事件，不构成对"东财单点依赖风险"的新增证据。</b></p>
+<p style="margin-top:8px"><b>工程后果</b>：akshare 东财行情系接口本机全不可用（<code>stock_zh_a_hist</code>、<code>_hist_min_em</code>、<code>_spot_em</code>、<code>_stop_em</code>、<code>_st_em</code>）。实测改由 baostock + 新浪系 + 腾讯系承载；附录 A.5 已给出 Phase 0 连通性探测命令与建池替代方案。</p>
+</div>
+</section>
+
+<section>
+<h2>三、12 号回填明细</h2>
+<h3>3.1 §10 九项遗留待验证 —— 定稿 5 项</h3>
+<table>
+<tr><th style="width:36px">#</th><th style="width:210px">原遗留项</th><th>定稿结论</th></tr>
+<tr><td>1</td><td>baostock 分钟线起始年份（社区称 2011）</td><td><span class="ok">✅</span> <b>约 2020 年初起，深度约 6.5 年</b>；2011-2013 请求全部 0 行（24 次）。<b>社区传闻被证伪</b></td></tr>
+<tr><td>2</td><td>akshare 东财系分钟线深度</td><td><span class="ok">✅ 部分定稿（口径变更）</span>：东财系本机不可达未能实测；改测新浪系，定为<b>固定 1970 条硬上限的"最近 N 条"窗口</b>（1min≈7 日 / 5min≈40 日 / 15min≈4 月 / 30min≈1 年 / 60min≈2 年）。东财系探点保留待验证</td></tr>
+<tr><td>3</td><td>tushare 2000 积分档价格</td><td><span class="refresh">⏳</span> 未定稿（未外扩，禁止注册账号）。触发：决定采购前查官方积分页</td></tr>
+<tr><td>4</td><td>mootdx 通达信服务器稳定性</td><td><span class="refresh">⏳</span> 未定稿（未安装）。触发：Phase 1 决定走场景 C 时实测</td></tr>
+<tr><td>5</td><td>efinance issue 编号差异</td><td><span class="refresh">⏳</span> 未定稿（未外扩）。触发：需引用该 issue 编号时回溯仓库</td></tr>
+<tr><td>6</td><td>akshare 复权因子接口名称与覆盖</td><td><span class="ok">✅ 部分定稿</span>：<code>stock_zh_a_daily</code> <b>不返回独立因子列</b>，需 <code>hfq价 ÷ bfq价</code> 自行反推；后复权价仅 2 位小数；覆盖率 38/38 = 100%</td></tr>
+<tr><td>7</td><td>baostock 财报公告日字段 / mootdx affair</td><td><span class="ok">✅ 前半定稿</span>：baostock <b>有 pubDate</b>（三条接口均有）；mootdx 部分未定稿</td></tr>
+<tr><td>8</td><td>akshare 巨潮源公告日接口稳定性</td><td><span class="refresh">⏳</span> 未定稿：默认参数返回 0 行（需显式传日期区间）。触发：需第二源校验时按正确区间重测</td></tr>
+<tr><td>9</td><td>baostock 分钟线单次拉取上限</td><td><span class="ok">✅</span> <b>单次 ≥77,472 行、无分页截断</b>（start=2015 与 start=1990 返回行数与首日完全相同）</td></tr>
+</table>
+
+<h3>3.2 正文改判（走修订日志 R-12-3 ~ R-12-11）</h3>
+<ul>
+<li><b>第 5 章分钟线矩阵</b>：baostock 行"2011 年起 [待验证]"→ <b>"约 2020 年初起（实测定稿）"</b>；"单次上限 [待验证]"→ <b>"≥77,472 行、无分页截断"</b>；akshare 新浪系行补入各档实测深度与 1970 条上限。</li>
+<li><b>第 5 章新增"小时级回测可行性"实测修正警告框</b>：零成本路径深度被砍到 6.5 年，2015/2018/2020 三段极端行情无法覆盖；若可接受 2020 年至今则是零成本最优解；新浪系 60min 约 2 年只够短期验证。</li>
+<li><b>第 6 章 PIT 表</b>：baostock 行"❌ 无公告日字段"→ <b>"✅ 有 pubDate（实测定稿）"</b>；降级方案代价"最多约 4 个月"→ <b>"中位 3 天 / 最大 46 天"</b>。</li>
+<li><b>新增 §9-A 整节</b>（四专项详述 + 股票池 + 环境发现 + 遗留项实测 + 对第 5/6/8 章的修正提示）、<b>附录 A.5</b>（东财不可达排查链与探测命令、代理规避更彻底写法、本机接口可用清单、东财不可达时的建池替代方案）。</li>
+<li><b>头部声明改写</b>：由"纯案头调研"改为"案头汇总 + 本机一手实测"双结论并存，提示按日期标注区分置信度。</li>
+</ul>
+
+<h3>3.3 新增遗留项 N-25 ~ N-28</h3>
+<table>
+<tr><th style="width:56px">#</th><th>新增项</th><th style="width:300px">触发条件</th></tr>
+<tr><td>N-25</td><td>增量成功率 20 日实测未跑满（本轮仅 5 日冒烟）</td><td>Phase 1 正式建库前跑满 20 个交易日（含跨周/跨月末/跨节假日）</td></tr>
+<tr><td>N-26</td><td>东财 push2his 本机不可达的根因与是否可绕</td><td>换网络环境（手机热点/其他宽带）复测；长期不可达则须从主链路排除东财系</td></tr>
+<tr><td>N-27</td><td>跨源复权因子股改分歧的权威口径</td><td>仅当需回测 2006 年前区间时查证；2015 年后回测不受影响</td></tr>
+<tr><td>N-28</td><td>baostock 不复权价与新浪 95 行不一致行的根因（101,629 行中 0.093%）</td><td>做双源逐日对账告警时排查；不影响当前结论</td></tr>
+</table>
+</section>
+
+<section>
+<h2>四、待验证项定稿情况（T5-T8）</h2>
+
+<h3>T5 <span class="ok">✅ 定稿</span> —— 程序化交易投资者报告表官方直链</h3>
+<div class="box">
+<p><b>纠正了两个错误前置假设</b>：① 报告表是 <b>.xlsx 不是 .docx</b>；② <b>不在细则页</b>（内容 id 10781696 只有 2 个附件：正文 + 起草说明），而挂在<b>上证发〔2023〕144号通知页（内容 id 10781705）</b>下。</p>
+</div>
+<table>
+<tr><th style="width:130px">附件</th><th>直链 / 验证</th></tr>
+<tr><td><b>报告表（xlsx）</b></td><td><code>https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/10781705/files/fe60203af5bc459eb56cc1124f63f861.xlsx</code><br>HTTP 200 / 23,306 B / <code>spreadsheetml.sheet</code> / 魔数 <code>50 4B 03 04</code> / Last-Modified 2025-10-10</td></tr>
+<tr><td><b>填报说明（docx）</b></td><td><code>https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/10781705/files/5c50468ec61547c8a0d775f2a34d9f89.docx</code><br>HTTP 200 / 47,161 B</td></tr>
+</table>
+<p>出处页面：<code>http://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20250612_10781705.shtml</code>（上证发〔2023〕144号，2023-10-09 生效，现行有效）。<br>
+<b>字段结构：40 个字段分 5 组</b> —— 账户基本信息 9（含<b>报告类型：首次/变更/停止使用</b>）+ 账户资金信息 8 + 交易信息 15（含<b>主/辅策略类型、交易指令执行方式、账户最高申报速率（笔/秒）、账户单日最高申报笔数</b>）+ 系统信息 3（<b>软件名称及版本号、开发主体、系统服务器所在地</b>）+ 其他 5（含<b>是否上传测试报告及应急方案</b>）。表内预置「个人首次示例」「机构首次示例」两行。<br>
+本地存档：<code>_archive_20260828\sse_程序化交易投资者信息报告表_附件1.xlsx</code>（含填报说明 docx 与沪股通版 xlsx）。</p>
+
+<h3>T6 <span class="ok">✅ 定稿</span> —— 北交所经手费</h3>
+<p><b>北交所 A 股（普通股，含优先股）交易经手费 = 按成交金额的 0.125‰（0.0125%）双边收取。</b><br>
+官方文件：《关于下调股票交易经手费收费标准的通知》<b>北证公告〔2023〕54号</b>，2023-08-18 发布、<b>2023-08-28 施行，现行有效</b>。官方页 <code>https://www.bse.cn/scgl_list/200018104.html</code>（WebFetch 直读官方表格；bse.cn 对 curl 返回 403）。</p>
+<table>
+<tr><th style="width:90px">收费项目</th><th style="width:150px">收费标的</th><th>收费标准（官方原文逐字）</th></tr>
+<tr><td>交易经手费</td><td>普通股</td><td>按成交金额的0.125‰双边收取。</td></tr>
+<tr><td>交易经手费</td><td>优先股</td><td><i>（官方表格中为合并单元格，与普通股适用同一标准）</i></td></tr>
+<tr><td>交易经手费</td><td>股份协议转让</td><td>按成交金额的0.125‰双边收取，单向每笔最高10万元。无成交金额或者每股成交金额低于每股面值的，以转让股份总面值计算收取。</td></tr>
+<tr><td>交易经手费</td><td>可转换公司债券</td><td>按普通股经手费标准减半收取。（→ 0.0625‰）</td></tr>
+</table>
+<div class="box danger">
+<p><b>关键：约为沪深 0.00341% 的 3.67 倍，成本模型不可套用沪深费率。</b> 此前 07 号"推测随 2023-08 下调同步至 0.00341%"<b>被证伪</b>（北交所走独立路径：0.025% → 0.0125%，降 50%）。</p>
+</div>
+<div class="box">
+<p><b>排掉的三颗雷</b>：<br>
+① 北证发〔2025〕37号"债券现券（<b>不含可转债</b>）经手费暂免延至 2026-12-31"属债券口径，与 A 股无关；<br>
+② 叩富网 2026-08-04 页仍写 0.025% 旧口径 + "最低 1 元"（官方页无任何依据）—— <b>"发布日期新"不等于"数据新"</b>，判定不予采信；<br>
+③ 上证发〔2025〕131号 / 深交所 2026 年度措施中涉及经手费的条款<b>均只针对债券侧</b>，<b>A 股经手费无一调整，14 号台账 A3 无需变更</b>（T10 复核结论：无制度性变更）。</p>
+</div>
+
+<h3>T7 <span class="ok">✅ 定稿</span> —— 变更报备时限 / 信息留存年限</h3>
+<p>取证路径：<b>直读第三轮已存档的上交所细则全文</b>（<code>_archive_20260827\sse_prog_rules_20260828.txt</code>），并用深交所官网同条同款作第二源。沪深<b>逐字一致</b>。</p>
+<div class="box good">
+<p><b>1. 变更报备时限</b>（上交所/深交所细则<b>第十条</b>第二款）：</p>
+<p style="font-style:italic">"会员客户报告信息发生重大变更的，应当在下一个自然月的第五个交易日之前向会员进行变更报告，会员在收到变更报告之日起五个交易日内向本所报告。"</p>
+<p style="margin-top:8px">落地含义：个人属"会员客户"，义务人是你自己，时限是<b>下一个自然月第 5 个交易日前</b>向券商提交 —— 不是"及时"这种模糊表述，而是有明确截止日的硬时点。</p>
+</div>
+<div class="box danger">
+<p><b>2. 信息留存年限</b>（第十五条第二款）：</p>
+<p style="font-style:italic">"会员及使用交易单元的其他机构应当妥善保存客户和自身的报告信息和交易相关资料，保存期限不得少于二十年。"</p>
+<p style="margin-top:8px"><b>⚠ 原表述存在主体误读，已更正</b>：20 年义务主体是<b>会员（券商）</b>，<b>不是投资者个人</b>；细则<b>未规定个人留存年限</b>（个人侧相关要求仅第二十七条末款"保留测试记录和评估结果"，无年限）。原清单"建议 ≥2 年"降格为自我审计经验值，<b>不应表述为"监管要求 2 年"</b>。</p>
+</div>
+
+<h3>T8 <span class="ok">✅ 部分定稿</span> —— 13 号 7 项中定稿 4 项</h3>
+<table>
+<tr><th style="width:180px">项</th><th>结论</th></tr>
+<tr><td>rqalpha CHANGELOG 版本号</td><td><span class="ok">✅</span> <b>T+1 重构 + 滑点限幅在 3.2.0；tick_size 容差 + NaN 防御在 6.1.4</b> —— 三条涨跌停修正<b>跨了两个大版本，非同批引入</b>（原文叙述需更正）。附 5 条逐字条目原文与行号索引</td></tr>
+<tr><td>vnpy Alpha 引擎涨跌停</td><td><span class="ok">✅</span> 取得<b>三条逐字原文</b>，口径为"整日封板"；附带确认"先撮合已有委托再调用 <code>on_bars</code> → 不存在当日信号当日成交"</td></tr>
+<tr><td>backtrader 许可</td><td><span class="ok">✅ GPLv3</span>（三源印证），<b>证伪"BSD 系传闻"</b>。触发条件只有"是否 convey"一条：内部自用/对外 SaaS <b>不触发</b>，对外分发<b>触发</b>整个衍生作品开源。<b>个人自用不构成障碍</b></td></tr>
+<tr><td>hikyuu 许可</td><td><span class="ok">✅ Apache-2.0</span>；⚠ <b>PyPI 误标 <code>MIT</code>，不可采信</b>（仓库仅一个 LICENSE 文件，GitHub 官方检测判 Apache-2.0）</td></tr>
+<tr><td>rqalpha 许可</td><td><span class="ok">✅</span> 补充 LICENSE 全文与四条判读要点：① <b>是主体标准不是用途标准</b>（法人/组织<b>不问目的</b>一律禁止）；② 主张<b>知识产权侵权责任</b>；③ 定性为 <b>source-available 非开源</b>（GitHub 判 <code>NOASSERTION</code>）；④ Apache-2.0 专利授权被限缩。⚠ PyPI 元数据写 <code>Apache-2.0</code> 且无 classifier → <b>自动化合规扫描工具一律漏报</b></td></tr>
+<tr><td>知乎十工具横评 URL</td><td><span class="refresh">⚠ 未命中，如实报告不臆造</span>。正文已三轮逐字核对（<code>Rqalpha对A股的支持是最好的,没有之一。</code>），但搜索引擎 URL 字段为空。已补替代可引用源（CSDN）+ 触发条件</td></tr>
+</table>
+<p><b>维持待 Phase 2 实测的 3 项</b>：hikyuu 撮合细节（TMF 源码）、rqalpha 停牌日撮合默认行为（即 13 号用例 3）、rqalpha ST 档位与整手校验。</p>
+</section>
+
+<section>
+<h2>五、任务一：台账复查留痕（14 号 §七 新增 6 行）</h2>
+<table>
+<tr><th style="width:190px">复查项</th><th>结论</th><th style="width:110px">是否修订来源文档</th></tr>
+<tr><td><b>A7 / D11 / D10</b></td><td>快照刷新：<b>A7 两融余额 26,651.17 亿（数据日 2026-08-27，无变更；08-28 数据 T+1 未出）</b>；<b>D11 akshare 仍为 1.18.94</b>（无新版，近一周 5 个 issue 已关 4 个）；<b>D10 Python 3.14.7 / 3.10 EOL 2026-10-31 无变更</b></td><td>否（数值未变更，仅刷新时点）</td></tr>
+<tr><td><b>A1 / A2 / A6</b>（月度）</td><td><b>未到期，本期不复查</b> —— 上次核验 2026-08-28，到期日 <b>2026-09-28</b></td><td>否</td></tr>
+<tr><td><b>A3 / A5 / B1 / B5 / C1 / C2 / D1-D9</b>（季度）</td><td><b>未到期，跳过</b> —— 到期日 <b>2026-11-28</b>。其中 A3 经手费借 T6 攻坚<b>顺带复核</b>：2026 年降费措施只针对债券侧，<b>A 股 0.00341% 无变更</b></td><td>否</td></tr>
+<tr><td><b>B2/B3/B4/B6/B7、C3/C4</b>（事件触发）</td><td><b>未触发，不跑</b> —— 逐项核对：无新规施行、未到开户阶段、无承销办法修订、未开通两融、无转融券恢复公告、未到开户谈判、未到报备阶段</td><td>否</td></tr>
+<tr><td><b>T5 / T6 / T7 / T8</b></td><td>四项定稿（详见上节）</td><td><b>是</b>（11 R-11-3~7、07 R-07-16~18、13 R-13-2~8）</td></tr>
+<tr><td><b>12 号 §9 实测</b></td><td>Phase 1 最小可行实测执行完毕 + §10 定稿 5 项 + 东财本机不可达</td><td><b>是</b>（12 R-12-3~11）</td></tr>
+</table>
+<div class="box">
+<p><b>下一轮提示</b>：若下一轮仍在 2026-09-28 之前执行，可直接沿用上述"未到期"结论，不必重复复查月度/季度项；09-28 之后须按月/季分别执行。</p>
+</div>
+</section>
+
+<section>
+<h2>六、剩余遗留清单</h2>
+<h3>6.1 12 号 §10 未定稿项（4 项）</h3>
+<table>
+<tr><th style="width:36px">#</th><th>项</th><th style="width:290px">触发条件</th></tr>
+<tr><td>3</td><td>tushare 2000 积分档价格</td><td>决定采购 tushare 前查官方积分页（不注册账号）</td></tr>
+<tr><td>4</td><td>mootdx 通达信服务器稳定性 + mootdx affair 公告日字段</td><td>Phase 1 决定走场景 C（自建分钟库）时实测</td></tr>
+<tr><td>5</td><td>efinance issue 编号差异（#215 vs #216）</td><td>需引用该 issue 编号时回溯仓库</td></tr>
+<tr><td>8</td><td>akshare 巨潮源公告日接口稳定性</td><td>需第二源校验公告日时，按正确日期区间重测</td></tr>
+</table>
+
+<h3>6.2 13 号 §7 未定稿项（3 项）+ 1 项 URL 缺口</h3>
+<table>
+<tr><th style="width:250px">项</th><th>触发条件</th></tr>
+<tr><td>hikyuu 撮合细节（涨跌停/T+1/停牌/ST/费用）</td><td>读 TMF 源码，或用 13 号第 5 章五个必挂用例实测</td></tr>
+<tr><td>rqalpha 停牌日撮合默认行为（拒单 vs 挂起）</td><td>即 13 号<b>用例 3</b>，装 rqalpha + bundle 后执行</td></tr>
+<tr><td>rqalpha ST 档位与整手校验</td><td>构造 ST 标的用例实测</td></tr>
+<tr><td>知乎十工具横评原文 URL</td><td>人工知乎站内检索；或采用 CSDN 替代源归档</td></tr>
+</table>
+
+<h3>6.3 其他遗留</h3>
+<table>
+<tr><th style="width:150px">ID / 来源</th><th>项</th><th style="width:280px">触发条件</th></tr>
+<tr><td>T9（台账 E）</td><td>高频差异化收费费率表</td><td>达到或接近高频认定前查证（个人中低频距认定线约两个数量级，不急）</td></tr>
+<tr><td>N1-N24</td><td>11/12/13 内文档级待验证</td><td>Phase 0-5 各阶段执行时</td></tr>
+<tr><td>N-25 ~ N-28</td><td>本轮实测新增（见 3.3）</td><td>见 3.3 表格</td></tr>
+<tr><td>11 号遗留项 12</td><td>深交所/北交所版报告表原文</td><td>开户券商为深市/北市主导需按其模板填报时，按同法取得（交易所规则页 → 枚举 <code>files/&lt;hash&gt;.xlsx</code>）</td></tr>
+<tr><td>07 号建议跟进</td><td>交易单元使用费 / 交易网关流速费（上证发〔2025〕131号第二条：4.5 万 → <b>3 万元/单元/年</b>，2026-07-01~2027-06-30）</td><td>若自建/租用交易单元或报盘通道，纳入成本模型</td></tr>
+</table>
+</section>
+
+<section>
+<h2>七、本轮修改的文档与修订日志索引</h2>
+<table>
+<tr><th style="width:170px">文档</th><th>修改性质</th><th style="width:150px">修订日志</th></tr>
+<tr><td><b>12 号</b> 数据源指南</td><td>新增 §9-A 实测章节 + 附录 A.5；§10 定稿 5 项 + 新增 N-25~N-28；第 5/6 章矩阵与结论改判；头部声明改写</td><td><b>R-12-3 ~ R-12-11</b>（9 条）</td></tr>
+<tr><td><b>11 号</b> 监管细则</td><td>§3.4 变更报备时限条款级原文；§5.3 留存年限说明框（更正主体误读）；§6.1 官方报告表说明框；§9 遗留项 3/5 定稿、新增 11/12；§10 新增来源 15-19</td><td><b>R-11-3 ~ R-11-7</b>（5 条）</td></tr>
+<tr><td><b>07 号</b> 成本手册</td><td>§C ④ 拆分为沪深/北交所两段（北交所 0.125‰）+ 串读陷阱警告 + 过期源警示；§D 北交所行销项；数据缺口清单销项</td><td><b>R-07-16 ~ R-07-18</b>（3 条）</td></tr>
+<tr><td><b>13 号</b> 回测框架</td><td>§3.1/§3.2/§3.4 许可定稿（GPLv3 / Apache-2.0 / 米筐自定义）；§4 矩阵第 9 行；§7 遗留项 1/2/5 定稿、7 如实报未命中；§8 新增来源 21-30 + 取证纪律</td><td><b>R-13-2 ~ R-13-8</b>（7 条）</td></tr>
+<tr><td><b>14 号</b> 台账</td><td>A7/D11/D10 时点刷新；台账 E 的 T5-T10 状态改判；§七 新增 6 行；头部加"第四轮复查口径说明"</td><td>台账回填（非修订，但已留痕）</td></tr>
+<tr><td><b>05 号</b> 来源与验证</td><td>新增 <b>§9.6 第四轮记录</b>（A 实测推翻 4 项 / B 更正误读 2 项 / C 新发现风险 3 项 / D 取证纪律 / E 成本纪律）</td><td>—</td></tr>
+<tr><td><b>index.html</b> 总览页</td><td>新增<b>第八节"第四轮上手实测"</b>；头部版本升 V5；页脚补充实测说明</td><td>—</td></tr>
+<tr><td><b>00_README.md</b></td><td>升 V5，补第四轮入口与变更表</td><td>—</td></tr>
+</table>
+<p style="font-size:13px;color:var(--steel);margin-top:8px">修改前全部备份于 <code>_archive_20260828\</code>。实测脚本与原始结果：<code>.cluster\rd4-20260828\work\</code>；核验底稿 <code>t5t6_report.md</code> / <code>t8_report.md</code>；官方附件存档 <code>_archive_20260828\</code>。</p>
+</section>
+
+<section>
+<h2>八、给下一步的三条行动建议</h2>
+<div class="box danger">
+<p><b>1. 立刻修正数据适配层的两个必改项</b><br>
+① baostock 日线入库前加 <code>tradestatus == "1"</code> 过滤（否则停牌脏行会污染指标与回测）；<br>
+② 跨源对账前先把两源停牌口径对齐（baostock 填充 vs 新浪跳过，同区间行数可差 4 倍）。</p>
+</div>
+<div class="box">
+<p><b>2. 重新评估小时级信号的可行性</b><br>
+零成本分钟线实测只有约 6.5 年（2020 年初起）。若策略需要 2015/2018/2020 三段极端行情做样本外验证，必须叠加 mootdx 本地库或购买 tushare 积分档；若可接受 2020 年至今，baostock 5min 聚合 60min 仍是最优零成本解。</p>
+</div>
+<div class="box">
+<p><b>3. Phase 1 正式建库前补齐 N-25</b><br>
+把增量成功率从 5 日冒烟补到 20 个交易日（含跨周/跨月末/跨节假日），这是"日更链路能不能长期无人值守"的唯一硬指标。</p>
+</div>
+</section>
+
+<footer>
+本说明所述实测结论均为 2026-08-28 本机一手实测结果，其中环境相关项（尤其"东财 push2his 本机不可达"）具有机器与网络相关性，换机后需自行复测。<br>
+全程未使用任何计费通道（monid 0 元）；未注册任何新账号；未付费购买任何数据源。<br>
+所有引用来源请在使用前二次核验时效性与真实性。本文档体系不构成投资建议。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中低频量化交易系统 · 预研总览</title>
+<style>
+:root{--navy:#1b2a4a;--steel:#5a6b8c;--ink:#22293a;--paper:#f7f8fa;--line:#d4dae3;--accent:#c0392b;--soft:#eef1f6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Source Han Serif SC","Noto Serif SC",Georgia,"Microsoft YaHei",serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:16px}
+.wrap{max-width:1080px;margin:0 auto;padding:56px 40px 80px}
+header{border-bottom:3px solid var(--navy);padding-bottom:28px;margin-bottom:40px}
+.kicker{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:12px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:14px;font-weight:600}
+h1{color:var(--navy);font-size:34px;line-height:1.3;margin-bottom:12px;font-weight:700}
+.meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:18px;font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-size:13px;color:var(--steel)}
+.meta b{color:var(--navy)}
+section{margin-bottom:48px}
+h2{font-size:20px;color:var(--navy);border-left:4px solid var(--accent);padding-left:14px;margin-bottom:20px;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+.verdict{background:#fff;border:1px solid var(--line);border-top:4px solid var(--accent);padding:28px 32px;box-shadow:0 1px 3px rgba(27,42,74,.06)}
+.verdict .no{font-family:Georgia,serif;font-size:64px;line-height:1;color:var(--accent);float:left;margin-right:24px;font-weight:700}
+.verdict p{overflow:hidden}
+.verdict .concl{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:8px}
+.docgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px}
+.doc{background:#fff;border:1px solid var(--line);padding:22px 24px;position:relative;border-top:3px solid var(--navy)}
+.doc h3{font-size:17px;color:var(--navy);margin-bottom:8px;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+.doc .tag{position:absolute;top:-11px;right:14px;background:var(--navy);color:#fff;font-family:"Segoe UI",sans-serif;font-size:11px;padding:2px 10px;letter-spacing:.08em}
+.doc p{font-size:13.5px;color:var(--ink)}
+.doc a{color:var(--navy);text-decoration:none;border-bottom:1px dotted var(--steel)}
+.doc .size{margin-top:10px;font-family:"Segoe UI",sans-serif;font-size:12px;color:var(--steel)}
+.arch{background:#fff;border:1px solid var(--line);padding:30px 26px;overflow-x:auto}
+.layer{display:flex;align-items:center;gap:14px;margin-bottom:10px;font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+.layer .env{flex:0 0 150px;text-align:right;color:var(--navy);font-weight:600;font-size:13px}
+.layer .bars{flex:1;display:flex;gap:4px}
+.bar{height:34px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;min-width:60px}
+.b-blue{background:#2e4a7a}.b-mid{background:#47619b}.b-soft{background:#6f87bb}.b-red{background:var(--accent)}
+.legend{margin-top:16px;font-size:12.5px;color:var(--steel);font-family:"Segoe UI",sans-serif}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px}
+th{background:var(--navy);color:#fff;padding:9px 12px;text-align:left;font-family:"Segoe UI",sans-serif;font-weight:600}
+td{border:1px solid var(--line);padding:8px 12px;vertical-align:top}
+tr:nth-child(even) td{background:var(--soft)}
+.ok{color:#1e7b34;font-weight:700}.warn{color:#b3541e;font-weight:700}
+sup{color:var(--accent);font-size:11px}
+footer{margin-top:56px;border-top:1px solid var(--line);padding-top:20px;font-size:12.5px;color:var(--steel);font-family:"Segoe UI",sans-serif}
+@media(max-width:720px){.wrap{padding:32px 18px}h1{font-size:26px}.verdict .no{font-size:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<div class="kicker">Research Delivery · FinAI Quant</div>
+<h1>中低频量化交易系统<br>预研交付总览</h1>
+<div class="meta">
+<span><b>编制日期</b> 2026-08-27（第三轮更新 2026-08-28 · 第四轮实测更新 2026-08-28）</span>
+<span><b>方法</b> 六路并行调研 → 多源交叉核验 → 分章写作 → 怀疑者终审</span>
+<span><b>市场范围</b> A股为主，海外方法论参照</span>
+<span><b>频率定义</b> 日线~小时级信号，持仓数日~数月</span>
+<span><b>版本</b> V5 · 第四轮上手实测完成（2026-08-28：Phase 1 最小可行实测四专项跑通、T5-T8 定稿、12 号新增 §9-A 实测结果与附录 A.5）</span>
+</div>
+</header>
+
+<section>
+<h2>一、对初始假设的判决</h2>
+<div class="verdict">
+<div class="no">✕</div>
+<p class="concl">"量化系统 = 回测 + 实时交易两部分"——假设不成立。</p>
+<p style="margin-bottom:8px">调研显示真实系统的最小工程范围为 <b>"四套环境 × 六层接口 + 运营四件套"</b>：研究 / 回测 / 模拟盘 / 实盘四套环境各自有准入关系；数据、特征、信号、组合、订单路由、风控六层抽象使同一份策略代码跨环境运行；监控告警、审计日志、报表闭环、配置灰度四个运营支撑件是实盘不出事故的底线。<span class="size">依据：quant67 架构长文深读 + Microsoft Qlib 官方模块划分 + 9 个开源项目结构实证（详见 01 报告 §2）<sup>[1][2]</sup></span></p>
+<p class="size">高频专属组件（FPGA / 托管机房 / tick 级撮合）确实可以省——但 paper 环境、对账、独立 kill switch、point-in-time 数据这四样"看似可选、实为必须"，省了不是省钱，是埋雷。</p>
+</div>
+</section>
+
+<section>
+<h2>二、五份交付文档地图</h2>
+<div class="docgrid">
+<div class="doc"><span class="tag">报告</span>
+<h3><a href="01_中低频量化交易系统全景调研报告.md">01 · 全景调研报告</a></h3>
+<p>初始假设判决 / 四环境×六层架构 / 约20模块职责表与缺失后果 / 与高频的裁剪边界 / 9 个开源项目佐证 / 常见误区推导链。</p>
+<div class="size">约 30KB · 17 项参考来源</div></div>
+<div class="doc"><span class="tag">框架</span>
+<h3><a href="02_中低频量化交易系统评估框架.md">02 · 评估框架</a></h3>
+<p>策略表现 / 回测可信度 / 系统架构 / 风险控制 / 工程可维护性 / 成本运维六大维度评分卡，含红旗速查清单与 Knight Capital 案例警示。回测可信度是第一优先维度。</p>
+<div class="size">约 24KB · 全指标带溯源标签</div></div>
+<div class="doc"><span class="tag">指南</span>
+<h3><a href="03_中低频量化交易系统构建指南.md">03 · 构建指南</a></h3>
+<p>Phase 0 需求 → Phase 6 运营迭代的七阶段路线图，每阶段附验收标准与坑点；五大类技术选型表锚定 GitHub 实证；18 条常见坑清单。</p>
+<div class="size">约 33KB · 面向个人开发者预算</div></div>
+<div class="doc"><span class="tag">词典</span>
+<h3><a href="04_股市术语词典与投资大佬经验总结.md">04 · 术语词典 + 大佬经验</a></h3>
+<p>上篇：60+ 词条六大群，"吃涨停板"专条置顶（三种语境+合法边界）；下篇：近五年 13 位投资人物卡（幻方/灵均/冯柳/Butler…含海外对照）+ 10 条元经验。</p>
+<div class="size">约 78KB · 定义类词条 ≥2 来源</div></div>
+<div class="doc"><span class="tag">台账</span>
+<h3><a href="05_来源与验证记录.md">05 · 来源与验证记录</a></h3>
+<p>三组高危断言核验结果 / 7 条决策日志 / R1-R7 风险登记册 / 错误修正轨迹。质疑任何结论时的第一入口。</p>
+<div class="size">约 8KB · 可回溯</div></div>
+</div>
+</section>
+
+<section>
+<h2>三、系统架构一图流</h2>
+<div class="arch">
+<div class="layer"><div class="env">research 研究</div><div class="bars"><div class="bar b-soft">数据管道</div><div class="bar b-soft">特征/因子</div><div class="bar b-soft">信号模型</div><div class="bar b-soft">实验管理</div></div></div>
+<div class="layer"><div class="env">backtest 回测</div><div class="bars"><div class="bar b-mid">事件驱动引擎</div><div class="bar b-mid">撮合/成本模型</div><div class="bar b-mid">绩效归因</div><div class="bar b-mid">Walk-Forward</div></div></div>
+<div class="layer"><div class="env">paper 模拟盘</div><div class="bars"><div class="bar b-blue">完整生产路径影子运行</div><div class="bar b-blue">偏差报告准入</div></div></div>
+<div class="layer"><div class="env">live 实盘</div><div class="bars"><div class="bar b-red">订单状态机</div><div class="bar b-red">券商网关</div><div class="bar b-red">对账</div><div class="bar b-blue">Kill Switch</div></div></div>
+<div class="layer"><div class="env">贯穿四环境的运营件</div><div class="bars"><div class="bar b-navy b-mid">监控告警</div><div class="bar b-mid">审计日志</div><div class="bar b-mid">报表回流</div><div class="bar b-mid">配置灰度</div></div></div>
+<div class="legend">红色 = 安全关键组件，不允许省略或与策略进程同生共死 ｜ 色深代表离资金越近。架构依据：<span class="size">[1] quant67《量化交易系统架构》 · [2] Microsoft Qlib README · [3] QuantStart Event-Driven Backtesting 系列</span></div>
+</div>
+</section>
+
+<section>
+<h2>四、核验战报（怀疑纪律的实战记录）</h2>
+<table>
+<tr><th style="width:30%">高危断言</th><th style="width:14%">核验结论</th><th>处置</th></tr>
+<tr><td>沪深主板 ST/*ST 涨跌幅 2026-07-06 起 5%→10%</td><td class="ok">✓ 证实</td><td>证监会原文 + 证券时报双源；顺带收入北交所单日买入 ≤20 万股限制条款</td></tr>
+<tr><td>Knight Capital "45分钟亏4.4亿 / 44万笔交易"</td><td class="warn">✕ 证伪修正</td><td>SEC 原文口径为发出超400万笔订单、成交超3.97亿股、损失超4.6亿美元；$440M 仅是事发次日公司初估注脚——全系列文档已改写并零残留复核</td></tr>
+<tr><td>幻方暂停申购 / 灵均限制交易时间线</td><td class="ok">✓ 证实并精确化</td><td>幻方=2021-11-15 暂停旗下全部产品申购；灵均=2024-02-19 开盘1分钟卖出25.67亿元、02-20起限3日+公开谴责</td></tr>
+</table>
+</section>
+
+<section>
+<h2>五、直接可用的三个速览</h2>
+<div class="docgrid">
+<div class="doc"><h3>回测不可信红旗清单</h3>
+<p style="font-size:13px">夏普≥3 必疑（Schwab 口径 outstanding 极少数达成）/ 未报告试验次数的高夏普必假（DSR 多重检验）/ 信号 bar 即成交 bar 是偷价 / 参数孤峰=记忆噪声……完整 7 条见 02 报告插页。</p></div>
+<div class="doc"><h3>个人中低频落地组合</h3>
+<p style="font-size:13px">akshare/tushare 数据 → backtrader 或 rqalpha 回测 → QMT/miniQMT 或 easytrader 下单，vnpy 作实盘框架升级选项。学习方式分"直接用/改造/借鉴思想"三档（03 指南选型表）。</p></div>
+<div class="doc"><h3>"吃涨停板"三分法</h3>
+<p style="font-size:13px">民间行话非规范术语：① 打板客封板前吃到货 ② 接力反复吃次日溢价 ③ 泛指分享涨停红利。手段涉"假封单撤单/抢帽子"即触《证券法》55条红线（04 词典专条）。</p></div>
+</div>
+</section>
+
+<section>
+<h2>六、第二轮审阅与补盲（2026-08-27 深夜 · 独立会话怀疑者复审）</h2>
+<div class="verdict" style="border-top-color:var(--navy)">
+<p class="concl">复核结论：框架站得住，数据手册有硬伤——9 类错误已全部修正并留痕。</p>
+<p style="margin-bottom:8px">全新会话以怀疑者立场通读全部文档，7 路核验代理 + 主线补核约 40 条易变数据（每条 ≥2 独立来源、检索日期 2026-08-27）：实锤修正过户费日期（2023-10-24→2022-04-29）、ETF 经手费（0.001705%→0.004%）、换手成本数量级（月频整仓 12.02%/年→1.20%/年）、打新申购单位（三市统一 500 股/签）、star 系统性低估（qlib 33.7k→47,978、vnpy 29.7k→44,802）、Python 版本（3.10+→3.11+）等；Knight Capital 8 项细节、Schwab 夏普口径、印花税率、ST 新规等 8 组高危断言逐字复核全部吻合。30 条独立盲区与 R1-R7 对比：纯增量 21 条、部分覆盖 9 条、重合 0 条。</p>
+</div>
+<div class="docgrid" style="margin-top:18px">
+<div class="doc"><span class="tag" style="background:var(--accent)">报告</span>
+<h3><a href="10_第二轮审阅与补盲报告.md">10 · 第二轮审阅与补盲报告</a></h3>
+<p>逐份质量评分 / 27 条核验总表 / 30 条盲区对比 / 选题论证 / 修订与回滚说明 / 待验证台账。本轮总入口。</p>
+<div class="size">约 23KB</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">合规</span>
+<h3><a href="11_A股程序化交易监管细则与个人报备实操指南.md">11 · 程序化交易监管细则与个人报备实操</a></h3>
+<p>实盘硬闸门：法规时间线（2024-10-08 管理规定施行 / 2025-07-07 细则施行）、高频认定距离测算、四类异常行为合规清单、QMT/PTrade 报备通道。</p>
+<div class="size">约 34KB</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">数据</span>
+<h3><a href="12_免费行情数据源实测对比与选型指南.md">12 · 免费行情数据源实测对比与选型指南</a></h3>
+<p>Phase 0-1 地基：7 源全景、前复权漂移与"后复权+存因子"正解、分钟线可得性矩阵（小时级信号可行性）、双源互补实证、Phase 1 统一实测方案。</p>
+<div class="size">约 25KB</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">回测</span>
+<h3><a href="13_回测框架A股适配代码级对比.md">13 · 回测框架 A 股适配代码级对比</a></h3>
+<p>Phase 2 决策：rqalpha/backtrader/vnpy/hikyuu 的 T+1、涨跌停、停牌处理代码级证据矩阵；backtrader 无内置涨跌停过滤实锤；5 个必挂验证用例。</p>
+<div class="size">约 32KB</div></div>
+</div>
+<div class="doc"><span class="tag" style="background:var(--accent)">台账</span>
+<h3><a href="14_易变数据保鲜与复查台账.md">14 · 易变数据保鲜与复查台账</a></h3>
+<p>A-E 五本字段化台账：交易成本/交易规则/监管合规/开源工具链/待验证追踪，每项含当前值、时点、检查频率、可执行检查方式与异常处理；附复查 SOP 与记录模板——R8 保鲜机制的落地件。</p>
+<div class="size">约 10KB</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">启动词</span>
+<h3><a href="15_第三轮调研启动提示词.md">15 · 第三轮调研启动提示词</a></h3>
+<p>保鲜复查+待验证定稿+Phase 0-1 环境摸底；autoglm 主力、monid 备用（计费/代理护栏）。</p>
+<div class="size">约 3KB</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">启动词</span>
+<h3><a href="16_第四轮调研启动提示词.md">16 · 第四轮调研启动提示词</a></h3>
+<p>Phase 1 最小可行实测（首次真跑 12 号 §9，四专项验收）+ T5-T8 定稿 + 台账到期推算；含上交所 docx 附件模式与代理陷阱护栏。</p>
+<div class="size">约 8KB</div></div>
+</section>
+<section>
+<h2>七、第三轮保鲜复查（2026-08-28）</h2>
+<div class="verdict" style="border-top-color:var(--navy)">
+<p class="concl">复查结论：13 项台账复查全部无变更；第二轮遗留的 4 个待验证项（T1-T4）全部定稿关闭。</p>
+<p style="margin-bottom:8px">月度项（印花税/过户费/融资利率/两融余额/akshare 版本）与重点季度项（经手费/佣金/涨跌停/保证金/程序化时间线/高频线/九项目 star/Python）逐项复核：制度类数值全部维持，快照类按 2026-08-28 新检索日期刷新（两融余额 26,651.17 亿@08-27，东财口径含北交所；九项目 star 微涨 ≤0.16%，版本均无变化）。T1-T4 定稿：证管费 0.02‰ 官方依据（发改价格〔2012〕2119号）、过户费无最低收费条款（2022 通知全文核验）、2025 主动退市 5 家名单定稿、上交所 2026 交易规则全文经 docx 附件取得（R1 传承链闭环）。</p>
+<div class="docgrid" style="margin-top:14px">
+<div class="doc"><span class="tag" style="background:var(--accent)">台账</span>
+<h3><a href="14_易变数据保鲜与复查台账.md">14 · 保鲜台账（第三轮回填）</a></h3>
+<p>A/B/C/D 四表时点刷新至 2026-08-28；T1-T4 状态改判；§七 复查记录表新增 3 轮记录——保鲜机制（R8）首次完整执行。</p>
+<div class="size">复查 13 项 · 定稿 4 项</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">环境</span>
+<h3><a href="12_免费行情数据源实测对比与选型指南.md">12 · 数据源指南（新增附录 A）</a></h3>
+<p>Phase 0 本机环境准备清单：Python 3.11 venv 处方、注册表代理陷阱（NO_PROXY 星号对 requests 无效）、akshare 四接口冒烟实测、东财 8 月失效窗口收尾记录。</p>
+<div class="size">Phase 0 可直接照做</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">条款</span>
+<h3><a href="11_A股程序化交易监管细则与个人报备实操指南.md">11 · 监管细则（C2 条款闭环）</a></h3>
+<p>高频认定线升级为官方原文条款级引用：上交所细则第三十三条逐字（300 笔/秒、20000 笔/日、"以上"含本数），docx 附件直链。</p>
+<div class="size">§4.1 + 遗留项 1 闭环</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">成本</span>
+<h3><a href="07_A股交易规则与交易成本数据手册.md">07 · 成本手册（T1/T2 定稿）</a></h3>
+<p>证管费从"近似采信"升级为官方收费依据（发改价格〔2012〕2119号：股票 0.02‰ 双向、基金债券免收）；过户费"低于 0.01 元按 0.01 元计"确认为券商取整惯例非官方规定。</p>
+<div class="size">R-07-13 ~ R-07-15</div></div>
+</div>
+<p class="size" style="margin-top:12px">其余变更：01/03/13 九项目 star 快照刷新（带 2026-08-28 检索日期）、04 主动退市 5 家定稿、05 §9.5 与 10 §十一 第三轮注记、00_README 升版 V4。第三轮工作台底稿：.cluster\rd3-20260828\work\（subagent_01/02/03.md + T4 规则全文存档 + 环境实测底稿）。</p>
+</div>
+</section>
+
+<section>
+<h2>八、第四轮上手实测（2026-08-28 · Phase 1 最小可行实测 + T5-T8 定稿）</h2>
+<div class="verdict" style="border-top-color:var(--accent)">
+<p class="concl">本轮第一次真跑：38 只池 × 三段区间 × 三源，四专项全部执行完毕 —— ③ 通过，①②④ 通过（④为 5 日冒烟版），并推翻了此前 4 项方向性判断。</p>
+
+<p style="margin-bottom:8px"><b>四专项验收结果</b>：① 复权一致性 —— 同源（baostock 后复权价 ↔ 因子接口）36/36 通过，最大相对误差 <b>3.3e-16</b>；跨源全史最大 31.5%，但分歧源已定位为 <b>2005-2006 股改事件</b>（新浪计入对价、baostock 不计入，×1.32~1.35），<b>2015 年后回测窗口内跨源收益差最大仅 0.19 个百分点、无一超过 0.5pp</b>；② 停牌日 —— <b>baostock 挂</b>：停牌日返回 OHLC 全等于前收盘、volume=0 的"前值填充"脏行（5 只样本 100% 命中，不报错），新浪系则直接不返回行（同区间 166 行 vs 38 行）；③ 公告日 —— <b>baostock 确有 pubDate</b>，128 条样本保守性成立率 100%；④ 增量成功率 —— 5 日 × 38 只 = 190 次，<b>100.00%</b>，0 不一致。</p>
+
+<div class="docgrid" style="margin-top:14px">
+<div class="doc"><span class="tag" style="background:var(--accent)">实测</span>
+<h3><a href="12_免费行情数据源实测对比与选型指南.md">12 · 数据源指南（新增 §9-A 实测结果）</a></h3>
+<p>四专项详述 + 股票池（含 ST 4 / 次新 4 / 长停牌 3）+ §10 九项遗留定稿 5 项 + 附录 A.5（东财不可达排查链、代理规避更彻底写法、本机接口可用清单、建池替代方案）。</p>
+<div class="size">R-12-3 ~ R-12-11 · 四专项</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">推翻</span>
+<h3>三条被实测改写的既有结论</h3>
+<p>① baostock 分钟线<b>实际起于 2020 年初（约 6.5 年）</b>，社区"2011 年起"被证伪 → 零成本小时级回测窗口大幅收窄；② baostock <b>有</b>公告日 pubDate，0 元即可做日线 PIT 对齐；③ 降级方案代价由"最多约 4 个月"修正为<b>中位 3 天、最大 46 天</b>。</p>
+<div class="size">影响选型与回测窗口设计</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">定稿</span>
+<h3><a href="11_A股程序化交易监管细则与个人报备实操指南.md">11 · 监管细则（T5/T7 定稿）</a></h3>
+<p>报告表官方直链取得（<b>.xlsx</b>、在<b>上证发〔2023〕144号</b>页非细则页，40 字段 5 组）；变更报备时限 = <b>下一个自然月第五个交易日前</b>；20 年留存义务主体是<b>券商</b>而非个人（原表述已更正）。</p>
+<div class="size">R-11-3 ~ R-11-7</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">成本</span>
+<h3><a href="07_A股交易规则与交易成本数据手册.md">07 · 成本手册（T6 定稿）</a></h3>
+<p>北交所经手费 <b>0.125‰ 双边</b>（约为沪深 3.67 倍，原"同步至 0.00341%"推测被证伪）；登记两处"债券 vs 股票"串读陷阱与一条过期源警示。</p>
+<div class="size">R-07-16 ~ R-07-18</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">合规</span>
+<h3><a href="13_回测框架A股适配代码级对比.md">13 · 回测框架（T8 定稿 4/7）</a></h3>
+<p>backtrader = <b>GPLv3</b>（证伪"BSD 系传闻"）；hikyuu = <b>Apache-2.0</b>（PyPI 误标 MIT）；rqalpha = 米筐自定义许可（<b>主体标准，法人/组织不问目的一律禁止</b>）；CHANGELOG 锁定 <b>3.2.0 / 6.1.4</b>（三条涨跌停修正跨两个大版本）。</p>
+<div class="size">R-13-2 ~ R-13-8</div></div>
+<div class="doc"><span class="tag" style="background:var(--accent)">台账</span>
+<h3><a href="14_易变数据保鲜与复查台账.md">14 · 保鲜台账（第四轮回填）</a></h3>
+<p>执行日与上次核验日同为 08-28 → 月度/季度项<b>周期未届满</b>，只做 A7/D11 快照刷新（均<b>无变更</b>）并注明"未满周期、抽查"；下次到期日 月度 2026-09-28 / 季度 2026-11-28。§七 新增 6 行留痕。</p>
+<div class="size">A7 26,651.17 亿@08-27 · D11 仍 1.18.94</div></div>
+</div>
+
+<p class="size" style="margin-top:12px">制度性变更：<b>无</b>（A3 经手费、T10 新规窗口经复核均无变更）。本轮<b>未使用任何计费通道</b>（monid 0 元）。实测脚本与原始结果：.cluster\rd4-20260828\work\（02~10 号脚本 + result_*.json + 两份核验底稿 t5t6_report.md / t8_report.md）；官方附件存档 _archive_20260828\。交付说明见 DELIVERY\第四轮交付说明.html。</p>
+</div>
+</section>
+<footer>
+本页面为 D:\Projects\research-finai 交付包导航入口，配套 <a href="00_README.md" style="color:var(--navy)">00_README.md</a> 使用。<br>
+所有结论仅供研究与学习，不构成投资建议；数字口径以各文档所附原始来源为准（检索日期均为 2026-08-27；第二轮修订对照第一轮原文备份 _archive_20260827\；第三/四轮修订备份 _archive_20260828\）。第四轮实测结论（§9-A）为本机 2026-08-28 一手实测，含环境相关项（如东财 push2his 本机不可达），换机后需自行复测。字体：思源宋体/系统衬线；风格参照 Fathom Information Design 科学期刊版式。
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# --- 精简清单（初始导入 2026-08-30） ---
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.pyo
+
+# 本仓库 research-finai 为纯研究/规格仓库，跟踪以下内容：
+#   根目录 00-16 调研文档、index.html、DELIVERY/、specs/、.specify/
+# 其余一律忽略：
+
+# 大体积/可再生目录（初始导入时有意不跟踪）
+.cluster/        # 315M 大目录（代理集群产物）
+.workbuddy/      # 代理会话状态（含 config.toml，可能含凭据，不入库）
+
+# 历史归档：文本已被根目录 00-16 文档的当前版本取代，仅保留 docx 唯一件
+_archive_20260827/sse_prog_rules_20260828.docx
+_archive_20260828/sse_prog_rules_20260828.docx
+
+# OS / IDE
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/

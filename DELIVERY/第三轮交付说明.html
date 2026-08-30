@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三轮交付说明 · 保鲜复查轮（2026-08-28）</title>
+<style>
+:root{--navy:#1b2a4a;--steel:#5a6b8c;--ink:#22293a;--paper:#f7f8fa;--line:#d4dae3;--accent:#c0392b;--soft:#eef1f6;--ok:#1e7b34;--warn:#b3541e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--paper);color:var(--ink);line-height:1.75;font-size:15.5px}
+.wrap{max-width:1020px;margin:0 auto;padding:52px 36px 72px}
+header{border-bottom:3px solid var(--navy);padding-bottom:24px;margin-bottom:36px}
+.kicker{font-size:12px;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:12px;font-weight:600}
+h1{color:var(--navy);font-size:30px;line-height:1.3;margin-bottom:10px}
+.meta{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px;font-size:13px;color:var(--steel)}
+.meta b{color:var(--navy)}
+section{margin-bottom:40px}
+h2{font-size:19px;color:var(--navy);border-left:4px solid var(--accent);padding-left:13px;margin-bottom:16px}
+.verdict{background:#fff;border:1px solid var(--line);border-top:4px solid var(--accent);padding:24px 28px;box-shadow:0 1px 3px rgba(27,42,74,.06)}
+.concl{font-size:17px;color:var(--navy);font-weight:700;margin-bottom:6px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px;margin:12px 0 6px}
+th{background:var(--navy);color:#fff;padding:8px 11px;text-align:left;font-weight:600}
+td{border:1px solid var(--line);padding:7px 11px;vertical-align:top}
+tr:nth-child(even) td{background:var(--soft)}
+.ok{color:var(--ok);font-weight:700}.refresh{color:var(--warn);font-weight:700}.closed{color:var(--navy);font-weight:700}
+code,pre{font-family:Consolas,"Courier New",monospace}
+pre{background:#20242e;color:#dfe6f1;padding:14px 16px;border-radius:6px;overflow-x:auto;font-size:12.5px;margin:10px 0}
+code{background:var(--soft);padding:1px 5px;border-radius:3px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px}
+.card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--navy);padding:16px 18px}
+.card h3{font-size:15px;color:var(--navy);margin-bottom:6px}
+.card p{font-size:13px}
+.big{font-size:22px;font-weight:700;color:var(--navy)}
+footer{margin-top:44px;border-top:1px solid var(--line);padding-top:16px;font-size:12.5px;color:var(--steel)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+<div class="kicker">Research Round 3 · FinAI Quant</div>
+<h1>第三轮交付说明 · 保鲜复查轮</h1>
+<div class="meta">
+<span><b>执行日</b> 2026-08-28</span>
+<span><b>方法</b> 3 路核验 Agent + 主线攻坚 + 独立复核</span>
+<span><b>通道</b> autoglm（免费主力）+ TinyFish（原文直读）+ 直连 API</span>
+<span><b>monid 成本</b> 0 元（未触发）</span>
+</div>
+</header>
+
+<section>
+<div class="verdict">
+<p class="concl">一句话结论</p>
+<p>13 项台账复查<b>全部无变更</b>（快照按新检索日期刷新）；第二轮遗留 <b>T1-T4 四项待验证全部定稿关闭</b>；Phase 0-1 环境摸底完成并写入 12 号附录 A。10 份文档定点修订 + 台账回填 + README/index 升版 V4，全部带修订日志留痕。</p>
+<div class="grid">
+<div class="card"><div class="big">13 / 13</div><p>台账复查项全部有结论：11 项无变更、2 项快照刷新（两融余额、九项目 star）</p></div>
+<div class="card"><div class="big">4 / 4</div><p>T1-T4 全部定稿关闭：证管费官方依据、过户费无最低条款、退市 5 家名单、规则全文 docx</p></div>
+<div class="card"><div class="big">10 份</div><p>文档定点修订，每处均有"改了什么/为什么/依据来源"三要素修订日志</p></div>
+<div class="card"><div class="big">0 元</div><p>monid 未触发；全部数据经免费通道（autoglm / TinyFish / GitHub / PyPI / 东财 API）取得</p></div>
+</div>
+</div>
+</section>
+
+<section>
+<h2>一、台账复查结果（任务一）</h2>
+<table>
+<tr><th style="width:12%">ID</th><th style="width:20%">数据项</th><th style="width:12%">结论</th><th>要点</th></tr>
+<tr><td>A1</td><td>印花税 0.5‰ 卖出</td><td class="ok">无变更</td><td>减半施行整 3 年节点无调整新闻；2026 预算仍按减半口径（双源）</td></tr>
+<tr><td>A2</td><td>过户费 0.01‰ 双边</td><td class="ok">无变更</td><td>2022-04 通知全文多源交叉</td></tr>
+<tr><td>A6</td><td>融资利率分层</td><td class="ok">无变更</td><td>8 月下旬无新价格战新闻，沿用 2026-07 快照</td></tr>
+<tr><td>A7</td><td>两融余额</td><td class="refresh">快照刷新</td><td><b>26,651.17 亿 ≈ 2.665 万亿（2026-08-27）</b>；东财 API+同花顺分毫一致（含北交所）；与财联社沪深口径差 83 亿即北交所，口径差已标注</td></tr>
+<tr><td>D11</td><td>akshare 1.18.94</td><td class="ok">无变更</td><td>三源确认；08-18~20 东财上游失效窗口已随 1.18.94 收尾（issues 全 closed）</td></tr>
+<tr><td>A3</td><td>经手费</td><td class="ok">无变更</td><td>上交所费表直读；辨伪：搜索摘要把债券暂免错拼到 A 股行</td></tr>
+<tr><td>A5</td><td>佣金/免5</td><td class="ok">无变更</td><td>免5 仍为传闻；2026-05 河北证监局仅重申 21 号文</td></tr>
+<tr><td>B1/B5</td><td>涨跌停/保证金</td><td class="ok">无变更</td><td>交易所规则页+证监会原文双源</td></tr>
+<tr><td>C1/C2</td><td>程序化时间线/高频线</td><td class="ok">无变更</td><td>C2 升级为条款级引用：上交所细则第三十三条 docx 原文（300 笔/秒、20000 笔/日、"以上"含本数）</td></tr>
+<tr><td>D1-D9</td><td>九项目 star/版本</td><td class="refresh">快照刷新</td><td>qlib 48,008 / vnpy 44,821 / rqalpha 6,730 / hikyuu 3,472 / akshare 22,277 / easytrader 10,094 / nautilus 27,983 / backtrader 23,002 / zipline 1,928；全部微涨 ≤0.16%，版本无变化</td></tr>
+<tr><td>D10</td><td>Python 3.14.7</td><td class="ok">无变更</td><td>3.10 EOL 2026-10-31（距 64 天）；"≥3.11"建议维持</td></tr>
+</table>
+</section>
+
+<section>
+<h2>二、T1-T4 定稿（任务二，四项全部关闭）</h2>
+<table>
+<tr><th style="width:8%">ID</th><th style="width:26%">定稿结论</th><th>关键证据</th></tr>
+<tr><td class="closed">T1</td><td>证管费官方依据取得：发改价格〔2012〕2119号——股票证券交易监管费 0.02‰（=0.002%）双向、<b>基金债券免收</b></td><td>财政部官网原文直读 + 上交所转发页 + 太平洋/华泰现行费表吻合</td></tr>
+<tr><td class="closed">T2</td><td>过户费"低于 0.01 元按 0.01 元计"<b>无官方条款</b>——2022-04 通知全文仅一段；判定为券商系统取整惯例</td><td>中国结算通知全文直读（21财经标注"来源：中国结算"）+ 澎湃交叉</td></tr>
+<tr><td class="closed">T3</td><td>2025 主动退市 <b>5 家</b>定稿：海通证券、中航产融、玉龙股份、中国重工、*ST天茂（2020-2024 历年 1/4/1/2/1 家）</td><td>21 财经 2026-01-19 原文明细段带名单可数；同文"6 家"概述口径注明并存，不强判</td></tr>
+<tr><td class="closed">T4</td><td>上交所 2026 交易规则全文<b>可获取</b>：规则页 docx 附件直链（主文件 65KB/482 段 + 起草说明 + 暂缓实施条文清单）</td><td>附件直链下载验证，全文本地存档；R1 传承链闭环</td></tr>
+</table>
+</section>
+
+<section>
+<h2>三、Phase 0-1 环境准备清单（任务三 → 12 号附录 A）</h2>
+<div class="grid">
+<div class="card"><h3>Python / venv</h3><p>本机 3.13.12 打包版<b>无 venv 模块</b>；建环境用 <code>py -3.11 -m venv</code>（3.11.5）。akshare 1.18.94 装包/import 实测通过。</p></div>
+<div class="card"><h3>pip 装包</h3><p>PyPI 境内直连可达，<b>装包无需代理</b>；清华镜像同步一致备用。</p></div>
+<div class="card"><h3>代理陷阱</h3><p>Clash 类系统代理<b>注册表级常开</b>，Python 默认走 127.0.0.1:7897；<b>NO_PROXY='*' 对 requests 无效</b>——须列域名或 trust_env=False。</p></div>
+<div class="card"><h3>接口冒烟</h3><p>日线（东财）✅ / 5min（新浪）✅ / 交易日历 ✅；min_em 分钟线失败系本机代理层，非上游死亡。</p></div>
+</div>
+<pre>py -3.11 -m venv D:\quant\venv
+D:\quant\venv\Scripts\python.exe -m pip install akshare==1.18.94
+
+# 采集脚本统一显式绕代理（列域名，勿用 *）
+import os
+os.environ['NO_PROXY'] = 'eastmoney.com,push2his.eastmoney.com,datacenter-web.eastmoney.com,sina.com.cn,sinajs.cn'
+# 或 requests.Session().trust_env = False</pre>
+<p style="font-size:13.5px"><b>12 号 §9 统一实测方案确认仍成立</b>（无候选源整体死亡、接口契约未变），可直接启动 Phase 1；东财系接口串行 + 间隔 ≥0.5s。</p>
+</section>
+
+<section>
+<h2>四、文档修订清单（10 份，全部带修订日志）</h2>
+<table>
+<tr><th style="width:22%">文档</th><th style="width:16%">修订日志</th><th>内容</th></tr>
+<tr><td>01 全景报告</td><td>R-01-5</td><td>九项目 star 快照刷新（2026-08-28 实测）；修复第二轮合并行格式缺陷</td></tr>
+<tr><td>03 构建指南</td><td>R-03-5</td><td>star 刷新 7 处；修正第二轮漏改残留（easytrader 9.2k→10,094）</td></tr>
+<tr><td>04 词典</td><td>R-04-4</td><td>T3 定稿：主动退市 5 家名单</td></tr>
+<tr><td>05 来源验证</td><td>§9.5</td><td>第三轮复查记录（R1-R7 未动）</td></tr>
+<tr><td>07 成本手册</td><td>R-07-13/14/15</td><td>两融快照；T2 改判；T1 证管费官方依据定稿</td></tr>
+<tr><td>10 第二轮报告</td><td>§十一</td><td>第三轮注记（T1-T4 处置回执）</td></tr>
+<tr><td>11 监管细则</td><td>R-11-1/2</td><td>C2 第三十三条官方原文引用 + docx 直链；遗留项 1 闭环</td></tr>
+<tr><td>12 数据源指南</td><td>R-12-1/2</td><td>新增附录 A 环境准备清单；§9 成立性复核</td></tr>
+<tr><td>13 回测框架</td><td>R-13-1</td><td>star 快照刷新 3 处</td></tr>
+<tr><td>14 台账</td><td>§二-§七</td><td>四表时点刷新；T1-T4 改判；复查记录 +3 行</td></tr>
+<tr><td>README / index</td><td>—</td><td>升版 V4：第三轮入口与变更区块</td></tr>
+</table>
+</section>
+
+<section>
+<h2>五、下一步</h2>
+<table>
+<tr><th style="width:30%">事项</th><th>时点</th></tr>
+<tr><td>Phase 1 统一实测（12 号 §9 + 附录 A 处方）</td><td>随时可启动；结果回填 12 号</td></tr>
+<tr><td>台账月度项复查（A1/A2/A6/A7/D11）</td><td>2026-09-28 到期</td></tr>
+<tr><td>akshare 四接口季度冒烟（附录 A.4）</td><td>随 D11 月度项联动</td></tr>
+<tr><td>T5-T10 及 11/12/13 文档级待验证</td><td>按各自触发点执行，不阻塞 Phase 0-2</td></tr>
+</table>
+</section>
+
+<footer>
+第三轮工作台底稿：D:\autoclaw_workspace\.cluster\rd3-20260828\work\（subagent_01/02/03.md、review.md、T4 规则全文存档、环境实测底稿、T3/T1 原文存档）。本页与 第三轮交付说明.md 同内容；仅供研究学习，不构成投资建议。
+</footer>
+
+</div>
+</body>
+</html>
