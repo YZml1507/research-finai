@@ -1,4 +1,5 @@
 # --- 精简清单（初始导入 2026-08-30） ---
+# 注意：忽略规则必须独占一行，行尾不得带注释（gitignore 不支持行尾注释）
 
 # Python 缓存
 __pycache__/
@@ -9,11 +10,15 @@ __pycache__/
 #   根目录 00-16 调研文档、index.html、DELIVERY/、specs/、.specify/
 # 其余一律忽略：
 
-# 大体积/可再生目录（初始导入时有意不跟踪）
-.cluster/        # 315M 大目录（代理集群产物）
-.workbuddy/      # 代理会话状态（含 config.toml，可能含凭据，不入库）
+# 大体积/可再生目录（有意不跟踪）
+# .cluster ~ 315M（代理集群产物）
+.cluster/
+# .workbuddy 代理会话状态（含 config.toml，可能含凭据，不入库）
+.workbuddy/
+# .claude 本地代理配置与历史
+.claude/
 
-# 历史归档：文本已被根目录 00-16 文档的当前版本取代，仅保留 docx 唯一件
+# 历史归档：文本已被根目录 00-16 文档当前版本取代，仅保留 docx 唯一件
 _archive_20260827/sse_prog_rules_20260828.docx
 _archive_20260828/sse_prog_rules_20260828.docx
 
