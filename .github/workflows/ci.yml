@@ -1,0 +1,69 @@
+name: Research-FinAI Specification & Governance CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  governance-validation:
+    name: Tasks Anti-Fraud & Specification Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: "Verify tasks.md Anti-Fraud Signatures"
+        run: |
+          python -c "
+          import re, sys
+          from pathlib import Path
+
+          p = Path('specs/001-a-stock-longonly-daily-quant/tasks.md')
+          if not p.exists():
+              print('tasks.md not found')
+              sys.exit(1)
+
+          text = p.read_text(encoding='utf-8')
+          lines = text.splitlines()
+          checked_pattern = re.compile(r'^\s*-\s*\[x\]\s*\[(T[-_A-Za-z0-9]+)\]\s*(.*)$')
+          unchecked_pattern = re.compile(r'^\s*-\s*\[\s*\]\s*\[(T[-_A-Za-z0-9]+)\]\s*(.*)$')
+          date_pattern = re.compile(r'—\s*\d{4}-\d{2}-\d{2}')
+          evidence_pattern = re.compile(r'(Commit|commit|passed|全绿|单测绿|单测|落盘|验收|报告|docs/|tests/|REVALIDATE|\.md|\.py|paper_trading/|HTTP|OK)')
+
+          violations = []
+          checked_cnt = 0
+
+          for idx, line in enumerate(lines, start=1):
+              m = checked_pattern.match(line)
+              if m:
+                  checked_cnt += 1
+                  task_id, content = m.group(1), m.group(2)
+                  if not date_pattern.search(content):
+                      violations.append(f'Line {idx} [{task_id}]: missing date — YYYY-MM-DD')
+                  if '✅' not in content:
+                      violations.append(f'Line {idx} [{task_id}]: missing checkmark ✅')
+                  if not evidence_pattern.search(content):
+                      violations.append(f'Line {idx} [{task_id}]: missing physical evidence')
+                  continue
+
+              m_un = unchecked_pattern.match(line)
+              if m_un:
+                  task_id, content = m_un.group(1), m_un.group(2)
+                  if '✅' in content:
+                      violations.append(f'Line {idx} [{task_id}]: unchecked task contains ✅ mark')
+
+          print(f'Checked {checked_cnt} completed tasks.')
+          if violations:
+              print(f'FAIL: {len(violations)} anti-fraud violations found:')
+              for v in violations:
+                  print('  -', v)
+              sys.exit(1)
+          print('PASS: All tasks.md entries meet anti-fraud governance standards.')
+          "
