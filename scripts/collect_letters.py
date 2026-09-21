@@ -37,6 +37,9 @@
   letters_official_szse.parquet    SZSE 权威事件表（source=szse_wxhj）
   letters_official_sse.parquet     SSE 权威事件表（source=sse_inquiries）
   letters/_nonletter_{YYYY}.parquet  命中关键词但非函件原件的记录（回复/核查/进展等）
+  letters_proxy/{letter_type}_{YYYY}.parquet
+      回复/进展公告推断的函件事件（ann_date=公告披露日, proxy_kind=回复|进展|其他）
+      ——2025 起交易所不再公开函件原件，此表为近年唯一可回看的函件存在证据
   manifest.jsonl                   每个 (kw, period)/(src,part) 分片一条采集登记
   manifest.json                    build 汇总：类型/年度覆盖/缺口登记
 
@@ -93,7 +96,6 @@ SUBTYPE_DESCR = [
     "监管关注", "监管工作", "信息披露监管", "自律监管", "股价异动", "异常波动",
     "权益变动", "二次", "补充", "问询", "提请关注", "关注", "监管", "警示",
 ]
-SUBTYPE_KW = ("问询函", "关注函", "监管函", "警示函")
 SUBTYPE_PAT = re.compile(r"(问询函|关注函|监管函|警示函)")
 EM_PAT = re.compile(r"</?em>")
 
@@ -462,7 +464,7 @@ def build(out: Path):
                "by_type": {}, "by_year": {}, "files": []}
     for lt, g in letters.groupby("letter_type"):
         summary["by_type"][lt] = int(len(g))
-        for y, gy in g.groupby(pd.Series([d.year for d in g["ann_date"]])):
+        for y, gy in g.groupby(g["ann_date"].map(lambda d: int(d.year))):
             f = outdir / f"{lt}_{y}.parquet"
             gy[["ann_date", "ts_code", "letter_type", "letter_subtype", "exchange",
                 "title", "url", "announcement_id", "page_column", "dup_event",
@@ -470,10 +472,28 @@ def build(out: Path):
             summary["files"].append({"file": f.name, "rows": int(len(gy))})
             summary["by_year"].setdefault(str(y), 0)
             summary["by_year"][str(y)] += int(len(gy))
-    for y, gy in nonletters.groupby(pd.Series([d.year for d in nonletters["ann_date"]])):
+    for y, gy in nonletters.groupby(nonletters["ann_date"].map(lambda d: int(d.year))):
         f = outdir / f"_nonletter_{y}.parquet"
         gy[["ann_date", "ts_code", "letter_type", "letter_subtype", "exchange",
             "title", "url", "announcement_id", "page_column",
+            "secName", "kw", "shard"]].to_parquet(f, index=False)
+
+    # 回复/进展代理事件：标题含函件词 + 回复/回函/答复/进展/落实 的衍生公告。
+    # 2025 起交易所不再公开函件原件（官方列表与 cninfo 原件同步断崖），
+    # 回复公告成为函件存在的唯一可回看证据；ann_date 为披露日（通常滞后 0~30 天）。
+    proxy = nonletters[nonletters["title"].str.contains(
+        r"回复|回函|答复|进展|落实|复函", regex=True, na=False)].copy()
+    proxy["proxy_kind"] = proxy["title"].map(
+        lambda t: "回复" if re.search(r"回复|回函|答复|复函", t)
+        else ("进展" if re.search(r"进展|落实", t) else "其他"))
+    proxydir = out / "letters_proxy"
+    proxydir.mkdir(exist_ok=True)
+    summary["proxy_rows"] = int(len(proxy))
+    for (lt, y), gy in proxy.groupby(
+            [proxy["letter_type"], proxy["ann_date"].map(lambda d: int(d.year))]):
+        f = proxydir / f"{lt}_{y}.parquet"
+        gy[["ann_date", "ts_code", "letter_type", "letter_subtype", "exchange",
+            "title", "url", "announcement_id", "page_column", "proxy_kind",
             "secName", "kw", "shard"]].to_parquet(f, index=False)
     (out / "manifest.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
