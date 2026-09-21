@@ -79,12 +79,22 @@ PAGE_COL_TO_EXCH = {
     "NEEQ": "NEEQ", "HK": "HK", "FUND": "FUND", "BOND": "BOND",
 }
 
-# 非函件原件的衍生公告：命中关键词但事件属性不同（回复/核查意见/进展/延期/更正等）
+# 非函件原件的衍生公告：命中关键词但事件属性不同（回复/核查意见/进展/延期/更正/说明/意见书等）
 NONLETTER_PAT = re.compile(
-    r"回复|答复|回函|延期|进展|核查意见|专项说明|补充说明|整改|取消|更正|撤销|落实|问询情况|问询问题"
+    r"回复|答复|回函|复函|延期|进展|核查意见|核查说明|专项核查|专项说明|补充说明|说明|"
+    r"法律意见|财务顾问意见|会计师意见|保荐意见|独立董事意见|专项意见|意见书|"
+    r"整改|取消|更正|撤销|落实|问询情况|问询问题|问询回复|函证|鉴证|审计报告|评估报告"
 )
-SUBTYPE_PAT = re.compile(r"([一-龥A-Za-z0-9（）]{0,10}?)(问询函|关注函|监管函|警示函)")
-SUBTYPE_TRIM = re.compile(r"^(关于|对|的|公司|收到|出具|采取|申请|进行|等|及|与|和|向|就|相关|有关|披露|报)+")
+# 细类词表：标题中紧贴关键词的描述语，最长匹配优先（与交易所官方口径对齐）
+SUBTYPE_DESCR = [
+    "非许可类重组", "许可类重组", "重大资产重组", "并购重组", "重组", "审核", "首轮",
+    "二轮", "三轮", "四轮", "第二轮", "第三轮", "年报", "年度报告",
+    "半年报", "三季报", "一季度报告", "定期报告", "业绩预告", "业绩快报",
+    "监管关注", "监管工作", "信息披露监管", "自律监管", "股价异动", "异常波动",
+    "权益变动", "二次", "补充", "问询", "提请关注", "关注", "监管", "警示",
+]
+SUBTYPE_KW = ("问询函", "关注函", "监管函", "警示函")
+SUBTYPE_PAT = re.compile(r"(问询函|关注函|监管函|警示函)")
 EM_PAT = re.compile(r"</?em>")
 
 
@@ -201,7 +211,9 @@ class Collector:
 
 
 SZSE_API = "https://www.szse.cn/api/report/ShowReport/data"
-SZSE_TABS = {"tab2": "主板", "tab3": "创业板"}
+# SZSE 官方目录：main_wxhj=问询函件(主板 tab2/创业板 tab3)；1800_jgxxgk=监管措施(监管函/警示函等)
+SZSE_CATS = {"wxhj": ("main_wxhj", {"tab2": "主板", "tab3": "创业板"}),
+             "jgxx": ("1800_jgxxgk", {"tab1": "监管措施"})}
 SSE_API = "http://query.sse.com.cn/commonSoaQuery.do"
 
 
@@ -242,46 +254,48 @@ def collect_szse(sess, out: Path, log):
     rawdir.mkdir(exist_ok=True)
     done_path = out / ".done_official"
     done = set(done_path.read_text(encoding="utf-8").split()) if done_path.exists() else set()
-    for tab, tabname in SZSE_TABS.items():
-        key = f"szse|{tab}"
-        if key in done:
-            continue
-        rows, failed = [], []
-        d, err = fetch_json(sess, SZSE_API,
-                            params={"SHOWTYPE": "JSON", "CATALOGID": "main_wxhj",
-                                    "TABKEY": tab, "PAGENO": 1, "random": str(random.random())},
-                            referer="https://www.szse.cn/disclosure/supervision/inquire/index.html")
-        pages = total = 0
-        if d:
-            for t in d:
-                if t.get("metadata", {}).get("tabkey") == tab:
-                    pages = int(t["metadata"].get("pagecount") or 0)
-                    total = int(t["metadata"].get("recordcount") or 0)
-                    rows.extend(t.get("data") or [])
-        for p in range(2, pages + 1):
-            time.sleep(random.uniform(SLEEP_LO, SLEEP_HI))
+    for cat_name, (catalog_id, tabs) in SZSE_CATS.items():
+        for tab, tabname in tabs.items():
+            key = f"szse|{cat_name}|{tab}"
+            if key in done:
+                continue
+            rows, failed = [], []
             d, err = fetch_json(sess, SZSE_API,
-                                params={"SHOWTYPE": "JSON", "CATALOGID": "main_wxhj",
-                                        "TABKEY": tab, "PAGENO": p, "random": str(random.random())},
+                                params={"SHOWTYPE": "JSON", "CATALOGID": catalog_id,
+                                        "TABKEY": tab, "PAGENO": 1, "random": str(random.random())},
                                 referer="https://www.szse.cn/disclosure/supervision/inquire/index.html")
-            got = 0
+            pages = total = 0
             if d:
                 for t in d:
                     if t.get("metadata", {}).get("tabkey") == tab:
-                        got = len(t.get("data") or [])
+                        pages = int(t["metadata"].get("pagecount") or 0)
+                        total = int(t["metadata"].get("recordcount") or 0)
                         rows.extend(t.get("data") or [])
-            if got == 0:
-                failed.append(p)
-        if rows:
-            pd.DataFrame(rows).assign(tab=tab, tab_name=tabname).to_parquet(
-                rawdir / f"wxhj_{tab}.parquet", index=False)
-        status = "ok" if not failed and d else ("fail" if not d else "partial")
-        log(src="szse_wxhj", part=tab, status=status, reported_total=total,
-            fetched=len(rows), failed_pages=failed)
-        if status == "ok":
-            with done_path.open("a", encoding="utf-8") as f:
-                f.write(key + "\n")
-        print(f"[{now_iso()}] szse {tab} {tabname}: total={total} fetched={len(rows)} {status}", flush=True)
+            for p in range(2, pages + 1):
+                time.sleep(random.uniform(SLEEP_LO, SLEEP_HI))
+                d, err = fetch_json(sess, SZSE_API,
+                                    params={"SHOWTYPE": "JSON", "CATALOGID": catalog_id,
+                                            "TABKEY": tab, "PAGENO": p, "random": str(random.random())},
+                                    referer="https://www.szse.cn/disclosure/supervision/inquire/index.html")
+                got = 0
+                if d:
+                    for t in d:
+                        if t.get("metadata", {}).get("tabkey") == tab:
+                            got = len(t.get("data") or [])
+                            rows.extend(t.get("data") or [])
+                if got == 0:
+                    failed.append(p)
+            if rows:
+                pd.DataFrame(rows).assign(cat=cat_name, tab=tab, tab_name=tabname).to_parquet(
+                    rawdir / f"{cat_name}_{tab}.parquet", index=False)
+            status = "ok" if not failed and d else ("fail" if not d else "partial")
+            log(src=f"szse_{cat_name}", part=tab, status=status, reported_total=total,
+                fetched=len(rows), failed_pages=failed)
+            if status == "ok":
+                with done_path.open("a", encoding="utf-8") as f:
+                    f.write(key + "\n")
+            print(f"[{now_iso()}] szse {cat_name} {tab} {tabname}: "
+                  f"total={total} fetched={len(rows)} {status}", flush=True)
 
 
 def collect_sse(sess, out: Path, log):
@@ -331,12 +345,17 @@ ENCODE_OPEN = re.compile(r"encode-open='([^']+)'")
 def build_official(out: Path):
     outdir = out / "letters"
     outdir.mkdir(exist_ok=True)
-    szse_file = out / "raw_szse" / "wxhj_tab2.parquet"
     frames = []
-    for tab in SZSE_TABS:
-        f = out / "raw_szse" / f"wxhj_{tab}.parquet"
-        if f.exists():
-            frames.append(pd.read_parquet(f))
+    for f in sorted((out / "raw_szse").glob("wxhj_*.parquet")):
+        frames.append(pd.read_parquet(f))
+    for f in sorted((out / "raw_szse").glob("jgxx_*.parquet")):
+        g = pd.read_parquet(f)
+        g = g.rename(columns={"gkxx_gsdm": "gsdm", "gkxx_gsjc": "gsjc",
+                              "gkxx_gdrq": "fhrq", "gkxx_jgcs": "hjlb",
+                              "hjnr": "ck"})
+        g["hfck"] = ""
+        g["gkxx_sjdx"] = g.get("gkxx_sjdx", "")
+        frames.append(g)
     if frames:
         z = pd.concat(frames, ignore_index=True).drop_duplicates(subset=["gsdm", "fhrq", "hjlb", "ck"])
         z["ann_date"] = pd.to_datetime(z["fhrq"]).dt.date
@@ -350,7 +369,7 @@ def build_official(out: Path):
         z["reply_url"] = z["hfck"].map(lambda s: "https://www.szse.cn" + m.group(1)
                                      if (m := ENCODE_OPEN.search(str(s))) else "")
         z["announcement_id"] = z["url"].str.extract(r"([0-9A-F]{32})\.pdf", expand=False)
-        z["source"] = "szse_wxhj"
+        z["source"] = "szse_" + z["cat"].fillna("wxhj")
         z[["ann_date", "ts_code", "letter_type", "letter_subtype", "exchange",
            "title", "url", "reply_url", "announcement_id", "gsjc", "source"]]\
             .rename(columns={"gsjc": "sec_name"}).to_parquet(
@@ -396,8 +415,19 @@ def classify(title: str):
     m = SUBTYPE_PAT.search(t)
     subtype = ""
     if m:
-        sub = SUBTYPE_TRIM.sub("", m.group(1)) + m.group(2)
-        subtype = sub[-12:]  # 细类上限 12 字，防前缀拖尾
+        kw = m.group(1)
+        subtype = kw
+        cands = [d for d in SUBTYPE_DESCR if kw not in d and not kw.startswith(d)]
+        for d in cands:  # 最长匹配优先：找到标题中「描述语+关键词」紧邻形态
+            if d + kw in t:
+                subtype = d + kw
+                break
+        else:
+            # 退而求其次：描述语与关键词同句出现但不相邻
+            for d in cands:
+                if d in t and len(d) > 1:
+                    subtype = d + kw
+                    break
     lt = merged_type(t)
     is_letter = bool(m) and not NONLETTER_PAT.search(t)
     return lt, subtype, is_letter
