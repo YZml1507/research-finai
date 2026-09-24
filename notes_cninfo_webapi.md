@@ -1860,3 +1860,28 @@
 - `sysapi/p_sysapi1123` 可转债发行  (债券发行)
 - `sysapi/p_sysapi1124` 可转债转股  (债券发行)
 - `sysapi/p_sysapi1129` 报告期分红明细  (业绩与分红)
+
+## apiDoc 参数文档详情接口（2026-09-24 补)
+
+逐接口参数文档不在树 JSON 里,需另调:
+`POST https://webapi.cninfo.com.cn/api-cloud-gateway-manage/apiDoc/info?gatewayCode=<树叶节点 code>` + Accept-Enckey 头。
+返回 {baseInfo, requestConfig.inputParameter[], serviceConfig, resultContent}——含每参数的 fieldName/isNeed(必填)/正则 checkRule/描述。
+已存 /tmp/apidoc_details.json 快照(20 个疑难接口)。
+
+## 复测翻盘表（按文档参数调用后由"死"转"活")
+
+| 接口 | 文档必填参数 | 实测 |
+|---|---|---|
+| sysapi/p_sysapi1030-1031 高管持股变动 | sdate+edate+varytype(B/S) | ✅已采完(66窗口×B/S) |
+| bigdata/p_researchreport 研报 | TYPE(C/I/M/A)+SDATE+EDATE (大写!) +page/rows | ✅分页索引,记录含 **PDF直链 F010V** |
+| info/p_info3032 公司研报数据 | scode(选)+edate(选) | ✅逐股全史(600000→1057条自2002) |
+| info/p_info3030 新闻数据查询 | scode+sdate+edate | ✅公司新闻全文(F008V正文) |
+| load/p_info3097_inc 个股研报摘要 | objectid(游标)+rowcount≤2000 | ✅增量拉全史,**F003V=研报完整摘要文本**(机构/作者/评级/EPS内嵌),OBJECTID~3M |
+| load/p_stock2218_inc 高管持股变动 | objectid+rowcount | ✅2006起增量全史 |
+| bigdata/p_news_by_scode | scode | ❌仍500 |
+| bigdata/p_com_news | scode(选) | ❌超时 |
+| bigdata/p_comnewslist | cid+sdate/edate | ❌仍500(需cid映射) |
+| info/p_info3097 | scode+sdate/edate | ⚠️n=0(用 _inc 版替代) |
+| stock/p_stock2336 分行业主营 | scode+rdate | ⚠️仍n=0 |
+| bigdata/ai_announcement_extraction | fileId/url | 未测(需知识库文件id) |
+| bigdata/ai_announcement_retrieval_prod | question | ❌aicloud 502(后端检索服务挂) |
