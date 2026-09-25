@@ -1885,3 +1885,26 @@
 | stock/p_stock2336 分行业主营 | scode+rdate | ⚠️仍n=0 |
 | bigdata/ai_announcement_extraction | fileId/url | 未测(需知识库文件id) |
 | bigdata/ai_announcement_retrieval_prod | question | ❌aicloud 502(后端检索服务挂) |
+
+## 批次落地状态（2026-09-25)
+
+| 表 | 状态 | 行数/进度 |
+|---|---|---|
+| p_sysapi1034 股东人数 (rdate) | ✅落盘 | 253,457 行(2005-2025季) |
+| p_sysapi1037 业绩预告 (rdate) | ✅落盘 | 104,459 行, DECLAREDATE+预测类型/区间/原因全文 |
+| p_sysapi1112 基金重仓 (rdate) | ✅落盘 | 181,699 行, F001N=基金数/F002N=股数/F003N=市值千元 |
+| p_sysapi1094 股权质押 (tdate) | 🔄 采集中 | ~91K 行,2019-08 处 |
+| p_sysapi1022 大宗交易 (tdate) | 🔄 | TRADEDATE 字段,分年归档已修 |
+| p_sysapi1023 融资融券 (tdate) | 队列中 | tdate3 道第2表 |
+| p_sysapi1024-1026 解禁/减持/增持 | 队列中 | tdate3 道后续 |
+| p_stock2541 市值 (scode) | 🔄 | rdate3 道末尾 |
+| p_stock2406 复权因子 (scode) | 🔄 | 700/5271 |
+| info/p_info3030 公司新闻 | 🔄 | 600/4218 股 |
+| info/p_info3032 公司研报 | 🔄 | 800/4031 股 |
+| info/p_info3085 公告索引(PDF直链) | 🔄 | 444/4001 股 |
+| p_sysapi1089 投资评级 | 🔄重采 | 假done日修复,6574天重拉(2005-09,2011-23) |
+| load/p_info3097_inc 研报摘要 | ✅完成 | ~685K 行摘要全文 |
+| load/p_stock2218_inc 高管变动 | ✅完成 | 2006+ |
+| bigdata/p_researchreport 研报索引 | ✅完成 | PDF直链 F010V |
+
+e62 正文覆盖 63.9%(361,117/565,512)。缺口前缀图:2021-24×6~9万(子道9c026bbe在采,93%命中)、2015-17×6~4.1万(a7d7bbfc)、2025-26×{0,3}~4.4万(本地l03)、2021-24×3残余+×9(e290c100)。notice_index 直链道完成后 match_notice_index.py 精准补残。
