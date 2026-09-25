@@ -1908,3 +1908,11 @@
 | bigdata/p_researchreport 研报索引 | ✅完成 | PDF直链 F010V |
 
 e62 正文覆盖 63.9%(361,117/565,512)。缺口前缀图:2021-24×6~9万(子道9c026bbe在采,93%命中)、2015-17×6~4.1万(a7d7bbfc)、2025-26×{0,3}~4.4万(本地l03)、2021-24×3残余+×9(e290c100)。notice_index 直链道完成后 match_notice_index.py 精准补残。
+
+## 0925 批次续 — VM 重启后采道全量恢复 + _s6 合并结果
+- VM 重启杀死全部采道（正文3+cninfo6+评级1），已全量断点续跑恢复（done_keys/done_codes_mt 无损）
+- `_s6`(2018-20×prefix0,60,742条) 合并 → 与既有语料 100% art_code 重复，净增 0
+- tdate3 链五表均中途中止（连续失败防假done）：blocktrade done=803/7938、margin=6、unlock=49、reduction/increase=0 → lane_tdate4 带 --sleep 0.8 重拉
+- 子会话交付确认：a218cd16(_s9 33,220条)、a2f04d5c(_s6 60,742条) 均已完成并传 Release
+- 在跑：9c026bbe(_s3, 2021-24×6)、a7d7bbfc(_s11, 2015-17×6)、e290c100(_s13+_s14)、本地 l03/l6/s8 + 索引(3085)+评级+6表
+- l6 重启段 miss 率高(603xxx 尾段 nomatch 密集)，命中收益预期低；真正收口靠 3085 索引直链道
