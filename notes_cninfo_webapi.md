@@ -1926,3 +1926,8 @@ e62 正文覆盖 63.9%(361,117/565,512)。缺口前缀图:2021-24×6~9万(子道
 - /dev/vda1 124G 写满→l03 OSError；已清理 notice_body_shards(9.5G) + 已合并分片(_fc/_s6/_s7/_s9/_s10/_s1*/_s2/_s5/_d/rec_*) 释放 22G
 - 损失：2025_l03 分片文件删除(merge前内容已在canonical安全)+2025_l6 写坏删除；post-merge增量行标done不补——由3085索引直链道后续兜底
 - 教训：merge后应及时清理分片；canonical {year}.parquet 是全集唯一权威
+
+## 数据Release归档 0925
+- `datasets-cninfo` Release: 15表tar.gz归档(评级186万条/大宗31.6万/新闻14.4万/研报索引等)
+- `annual-reports-txt` Release: 2000-2025 逐年26个tar.gz(年报全文语料采购资产) — 本地27G已删除
+- 磁盘 15G→39G free
