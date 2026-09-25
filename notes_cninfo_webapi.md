@@ -1921,3 +1921,8 @@ e62 正文覆盖 63.9%(361,117/565,512)。缺口前缀图:2021-24×6~9万(子道
 - cninfo_pledge 10.7万条(2018+覆盖2662股) → plg_net3m/plg_cnt3m/plg_rel3m 三信号
 - 结果全弱: plg_cnt3m IC 0.0106/t1.27 最高,余IC<0.005 — 质押流量信号不立项
 - eval.json+sig parquet 已 force-add (e104)
+
+## 磁盘事件 0925
+- /dev/vda1 124G 写满→l03 OSError；已清理 notice_body_shards(9.5G) + 已合并分片(_fc/_s6/_s7/_s9/_s10/_s1*/_s2/_s5/_d/rec_*) 释放 22G
+- 损失：2025_l03 分片文件删除(merge前内容已在canonical安全)+2025_l6 写坏删除；post-merge增量行标done不补——由3085索引直链道后续兜底
+- 教训：merge后应及时清理分片；canonical {year}.parquet 是全集唯一权威
